@@ -1,0 +1,31 @@
+extends layout
+block head
+    link(type="text/css", rel="stylesheet", href="/stylesheets/style.css")
+block body
+    a(href='/') トップページに戻る
+    div.listPage
+        h1 作品一覧
+        div
+            if page != 1
+                a(href='./1') 最初のページ
+                a(href='./#{page-1}') 前のページ
+            else
+                a.inactive 最初のページ
+                a.inactive 前のページ
+            a #{page} / #{totalPageCount}
+            if page != totalPageCount
+                a(href='./#{page-0+1}') 次のページ
+                a(href='./#{totalPageCount}') 最後のページ
+            else
+                a.inactive 次のページ
+                a.inactive 最後のページ
+        div
+            ul
+            each comic in comics
+                div.thumbnail
+                    a(href='/c/#{comic.fileName}.png')
+                        img(src='/c/thumb/#{comic.fileName}.thumb.png',
+                            title='#{new Date(Number(comic.fileName)).toString()}',
+                            alt='ファイルがないよ(´・ω・｀)')
+                    p 描いた人：&nbsp;#{comic.author}
+            div.clear

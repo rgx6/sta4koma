@@ -1,0 +1,3 @@
+node_modules
+/public/c/*.png
+/public/c/thumb/*.png

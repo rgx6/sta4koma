@@ -1,0 +1,109 @@
+/**
+ * canvas
+*/
+
+.canvases {
+  position: relative;
+  height: 1200px;
+  width: 600px;
+  padding: 50px;
+  background-color: #c5c5c5;
+  border-radius: 20px;
+}
+
+.canvases canvas {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+}
+
+#combinationCanvas {
+  z-index: 0;
+  display: none;
+}
+
+#frameCanvas {
+  z-index: 10;
+}
+
+#mainCanvas {
+  z-index: 20;
+}
+
+#cursorCanvas {
+  z-index: 30;
+}
+
+#previewCanvas {
+  border: 3px solid #000000;
+  border-radius: 10px;
+}
+
+/**
+ *
+*/
+
+.tool-area > div {
+  margin-top: 10px;
+}
+
+/**
+ * slider
+*/
+
+.label-slider {
+  width: 50px;
+}
+
+/**
+ * スタンプ選択
+ */
+.radio-group {
+  border: 3px solid #ffffff;
+}
+
+.radio-group.selected {
+  border: 3px solid #3ba3d7;
+}
+
+img.radio-group {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+}
+
+/**
+ * その他
+*/
+
+#post {
+  margin-right: 10px;
+}
+
+/**
+ * 一覧
+*/
+
+.listPage {
+    margin: 20px;
+    text-align: center;
+}
+
+.listPage a {
+    margin-right: 30px;
+}
+
+.inactive {
+    color: #999999;
+}
+
+.thumbnail {
+    float: left;
+    margin: 10px;
+}
+
+.thumbnail img {
+    border: solid;
+    border-width: 1px;
+    border-color: #999999;
+}

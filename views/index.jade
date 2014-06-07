@@ -1,0 +1,69 @@
+extends layout
+block head
+    link(type="text/css", rel="stylesheet", href="/stylesheets/bootstrap.min.css")
+    link(type="text/css", rel="stylesheet", href="/stylesheets/bootstrap-slider.css")
+    link(type="text/css", rel="stylesheet", href="/stylesheets/style.css")
+    script(type="application/javascript", src="/socket.io/socket.io.js")
+    script(type="application/javascript", src="/javascripts/jquery-2.1.0.min.js")
+    script(type="application/javascript", src="/javascripts/bootstrap.min.js")
+    script(type="application/javascript", src="/javascripts/bootstrap-slider.js")
+    script(type="application/javascript", src="/javascripts/tweetbutton.js")
+    script(type="application/javascript", src="/javascripts/index.js")
+block body
+    div.container(style="max-width: none; important; width: 970px;")
+        div.jumbotron
+            h1= title
+            すたちゅーさんの4コマまんがを描こう！
+            br
+            みんなの作品は
+            a(href="/list/1") こちら
+
+        div.row
+            div.col-xs-8
+                div.canvases
+                    canvas#combinationCanvas(width="500px", height="1100px")
+                    canvas#frameCanvas(width="500px", height="1100px")
+                    canvas#mainCanvas(width="500px", height="1100px")
+                    canvas#cursorCanvas(width="500px", height="1100px")
+            div.col-xs-4.tool-area
+                div
+                    canvas#previewCanvas(width="200px", height="200px")
+                div
+                    div.btn-group(data-toggle="buttons")
+                        label#brush.btn.btn-default
+                            input(type="radio" name="tools" value="brush")
+                            描く
+                        label#eraser.btn.btn-default
+                            input(type="radio" name="tools" value="eraser")
+                            消す
+                        label#stamp.btn.btn-default.active
+                            input(type="radio" name="tools" value="stamp")
+                            すた
+                div
+                    div
+                        label.label-slider 太さ
+                        input#brushSize(type="text")
+                    div
+                        label.label-slider 大きさ
+                        input#stampSize(type="text")
+                div
+                    div
+                        label すたんぷ
+                    img#stamp1.radio-group.selected(src="/images/stamp1.png")
+                    img#stamp2.radio-group(src="/images/stamp2.png")
+                    img#stamp3.radio-group(src="/images/stamp3.png")
+                    img#stamp4.radio-group(src="/images/stamp4.png")
+                    img#stamp5.radio-group(src="/images/stamp5.png")
+                    img#stamp6.radio-group(src="/images/stamp6.png")
+                    img#stamp7.radio-group(src="/images/stamp7.png")
+                    img#stamp8.radio-group(src="/images/stamp8.png")
+                    img#stamp9.radio-group(src="/images/stamp9.png")
+                div
+                    button#post.btn.btn-info(type="button") 投稿する
+                    button#clear.btn.btn-default(type="button") クリア
+                div#tweetButtonWrapper
+                    p 投稿するとツイートボタンが出てきます
+        div.row
+            div.col-xs-12
+                p お問い合わせ先&nbsp;
+                    a(href="https://twitter.com/rgx_6") @rgx_6
