@@ -1,3 +1,4 @@
 node_modules
+/log/*
 /public/c/*.png
 /public/c/thumb/*.png
