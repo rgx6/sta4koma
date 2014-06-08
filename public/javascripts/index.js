@@ -48,6 +48,11 @@
         var drawWidth = 3;
         // スタンプ描画倍率
         var drawScale = 0.5;
+        // スタンプ回転
+        var drawAngle = 0;
+        // 反転
+        var vInversionFactor = 1;
+        var hInversionFactor = 1;
         // 描画中フラグ
         var drawFlag = false;
         // canvasオブジェクト
@@ -238,10 +243,12 @@
                 cursorContext.fill();
             } else if (mode === 'stamp') {
                 // scale()は座標指定にも影響するっぽい
-                var drawX = startX / drawScale - stampSize / 2;
-                var drawY = startY / drawScale - stampSize / 2;
+                var hInvDrawScale = drawScale * hInversionFactor;
+                var vInvDrawScale = drawScale * vInversionFactor;
+                var drawX = startX / hInvDrawScale - stampSize / 2;
+                var drawY = startY / vInvDrawScale - stampSize / 2;
                 cursorContext.save();
-                cursorContext.scale(drawScale, drawScale);
+                cursorContext.scale(hInvDrawScale, vInvDrawScale);
                 cursorContext.drawImage($('.radio-group.selected')[0], drawX, drawY);
                 cursorContext.restore();
             } else {
@@ -331,6 +338,24 @@
                 drawScale = self.value;
                 drawPreview();
             }, 1);
+        });
+
+        /**
+         * 上下・左右反転ボタンクリック
+         */
+        $('#vInversion').on('click', function () {
+            'use strict';
+            // console.log('#vInversion click');
+
+            vInversionFactor *= -1;
+            drawPreview();
+        });
+        $('#hInversion').on('click', function () {
+            'use strict';
+            // console.log('#hInversion click');
+
+            hInversionFactor *= -1;
+            drawPreview();
         });
 
         /**
@@ -501,11 +526,14 @@
                 previewContext.arc(x, y, drawWidth / 2, 0, Math.PI * 2, false);
                 previewContext.fill();
             } else if (mode === 'stamp') {
+
                 // scale()は座標指定にも影響するっぽい
-                x = x / drawScale - stampSize / 2;
-                y = y / drawScale - stampSize / 2;
+                var hInvDrawScale = drawScale * hInversionFactor;
+                var vInvDrawScale = drawScale * vInversionFactor;
+                x = x / hInvDrawScale - stampSize / 2;
+                y = y / vInvDrawScale - stampSize / 2;
                 previewContext.save();
-                previewContext.scale(drawScale, drawScale);
+                previewContext.scale(hInvDrawScale, vInvDrawScale);
                 previewContext.drawImage($('.radio-group.selected')[0], x, y);
                 previewContext.restore();
             } else {
@@ -556,10 +584,12 @@
             // console.log('drawStamp');
 
             // scale()は座標指定にも影響するっぽい
-            var drawX = x / drawScale - stampSize / 2;
-            var drawY = y / drawScale - stampSize / 2;
+            var hInvDrawScale = drawScale * hInversionFactor;
+            var vInvDrawScale = drawScale * vInversionFactor;
+            var drawX = x / hInvDrawScale - stampSize / 2;
+            var drawY = y / vInvDrawScale - stampSize / 2;
             context.save();
-            context.scale(drawScale, drawScale);
+            context.scale(hInvDrawScale, vInvDrawScale);
             context.drawImage($('.radio-group.selected')[0], drawX, drawY);
             context.restore();
         }

@@ -30,22 +30,26 @@ block body
                     canvas#previewCanvas(width="200px", height="200px")
                 div
                     div.btn-group(data-toggle="buttons")
+                        label#stamp.btn.btn-default.active
+                            input(type="radio" name="tools" value="stamp")
+                            すた
                         label#brush.btn.btn-default
                             input(type="radio" name="tools" value="brush")
                             描く
                         label#eraser.btn.btn-default
                             input(type="radio" name="tools" value="eraser")
                             消す
-                        label#stamp.btn.btn-default.active
-                            input(type="radio" name="tools" value="stamp")
-                            すた
-                div
+                div.slider-area
                     div
                         label.label-slider 太さ
                         input#brushSize(type="text")
                     div
                         label.label-slider 大きさ
                         input#stampSize(type="text")
+                    div
+                        label.label-slider 反転
+                        button#vInversion.btn.btn-default(type="button" data-toggle="button") 上下
+                        button#hInversion.btn.btn-default(type="button" data-toggle="button") 左右
                 div
                     div
                         label すたんぷ

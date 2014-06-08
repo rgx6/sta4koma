@@ -55,6 +55,10 @@
   width: 50px;
 }
 
+.slider-area button {
+  margin-right: 5px;
+}
+
 /**
  * スタンプ選択
  */
