@@ -228,44 +228,12 @@
             e.stopPropagation();
             if (isDisabled) return;
 
-            cursorContext.clearRect(0, 0, $('#cursorCanvas').width(), $('#mainCanvas').height());
-
             startX = Math.round(e.pageX) - $('#mainCanvas').offset().left;
             startY = Math.round(e.pageY) - $('#mainCanvas').offset().top;
 
-            var mode = getDrawMode();
-            if (mode === 'brush' || mode === 'eraser') {
-                if (mode === 'brush') {
-                    cursorContext.lineWidth = 0;
-                    cursorContext.strokeStyle = color;
-                    cursorContext.fillStyle = color;
-                } else {
-                    cursorContext.lineWidth = 1;
-                    cursorContext.strokeStyle = color;
-                    cursorContext.fillStyle = '#ffffff';
-                }
-                cursorContext.beginPath();
-                cursorContext.arc(startX, startY, drawWidth / 2, 0, Math.PI * 2, false);
-                cursorContext.stroke();
-                cursorContext.fill();
-            } else if (mode === 'stamp') {
-                // scale()は座標指定にも影響するっぽい
-                var hInvDrawScale = drawScale * hInversionFactor;
-                var vInvDrawScale = drawScale * vInversionFactor;
-                var drawX = startX / hInvDrawScale - stampSize / 2;
-                var drawY = startY / vInvDrawScale - stampSize / 2;
-                cursorContext.save();
-                cursorContext.translate(startX, startY);
-                cursorContext.rotate(Math.PI * drawAngle);
-                cursorContext.translate(-startX, -startY);
-                cursorContext.scale(hInvDrawScale, vInvDrawScale);
-                cursorContext.drawImage($('.radio-group.selected')[0], drawX, drawY);
-                cursorContext.restore();
-            } else {
-                console.log('unknown mode : ' + mode);
-                alert('エラーが発生しました');
-            }
+            drawCursor(startX, startY);
         });
+
         $('#cursorCanvas').mouseleave(function (e) {
             'use strict';
             // console.log('mouse leave');
@@ -390,20 +358,14 @@
         });
 
         /**
-         * スタンプ選択
+         * スタンプの種類を選択
          */
         $('.radio-group').click(function () {
             'use strict';
             // console.log('.radio-group click');
 
-            $('.radio-group').removeClass('selected');
-            $(this).addClass('selected');
-
-            // スタンプ選択時はモードもスタンプに切り替える
-            $('.btn-group>label').removeClass('active');
-            $('#stamp').addClass('active');
-
-            changeStampMode();
+            var stampId = '#' + $(this).attr('id');
+            selectStamp(stampId);
         });
 
         /**
@@ -502,6 +464,20 @@
             }, 100));
         });
 
+        /**
+         * キーボードショートカット
+         */
+        $(window).keyup(function (e) {
+            'use strict';
+            // console.log('window keyup ' + e.keyCode);
+
+            // スタンプの種類
+            if (49 <= e.keyCode && e.keyCode <= 57) {
+                var stampId = '#stamp' + (e.keyCode - 48);
+                selectStamp(stampId);
+            }
+        });
+
         //------------------------------
         // 関数
         //------------------------------
@@ -572,6 +548,27 @@
         }
 
         /**
+         * スタンプの種類を変更
+         */
+        function selectStamp (stampId) {
+            'use strict';
+            // console.log('selectStamp');
+
+            $('.radio-group').removeClass('selected');
+            $(stampId).addClass('selected');
+
+            // スタンプ選択時はモードもスタンプに切り替える
+            $('.btn-group>label').removeClass('active');
+            $('#stamp').addClass('active');
+
+            // 線を描画中に切り替えた場合は描画を中断させる
+            drawFlag = false;
+
+            changeStampMode();
+            drawCursor(startX, startY);
+        }
+
+        /**
          * ブラシサイズ変更時に表示を更新する
          */
         function drawPreview (forcedMode) {
@@ -607,6 +604,49 @@
                 previewContext.scale(hInvDrawScale, vInvDrawScale);
                 previewContext.drawImage($('.radio-group.selected')[0], x, y);
                 previewContext.restore();
+            } else {
+                console.log('unknown mode : ' + mode);
+                alert('エラーが発生しました');
+            }
+        }
+
+        /**
+         * ペン先表示
+         */
+        function drawCursor (x, y) {
+            'use strict';
+            // console.log('drawCursor');
+
+            cursorContext.clearRect(0, 0, $('#cursorCanvas').width(), $('#mainCanvas').height());
+
+            var mode = getDrawMode();
+            if (mode === 'brush' || mode === 'eraser') {
+                if (mode === 'brush') {
+                    cursorContext.lineWidth = 0;
+                    cursorContext.strokeStyle = color;
+                    cursorContext.fillStyle = color;
+                } else {
+                    cursorContext.lineWidth = 1;
+                    cursorContext.strokeStyle = color;
+                    cursorContext.fillStyle = '#ffffff';
+                }
+                cursorContext.beginPath();
+                cursorContext.arc(startX, startY, drawWidth / 2, 0, Math.PI * 2, false);
+                cursorContext.stroke();
+                cursorContext.fill();
+            } else if (mode === 'stamp') {
+                // scale()は座標指定にも影響するっぽい
+                var hInvDrawScale = drawScale * hInversionFactor;
+                var vInvDrawScale = drawScale * vInversionFactor;
+                var drawX = startX / hInvDrawScale - stampSize / 2;
+                var drawY = startY / vInvDrawScale - stampSize / 2;
+                cursorContext.save();
+                cursorContext.translate(startX, startY);
+                cursorContext.rotate(Math.PI * drawAngle);
+                cursorContext.translate(-startX, -startY);
+                cursorContext.scale(hInvDrawScale, vInvDrawScale);
+                cursorContext.drawImage($('.radio-group.selected')[0], drawX, drawY);
+                cursorContext.restore();
             } else {
                 console.log('unknown mode : ' + mode);
                 alert('エラーが発生しました');
