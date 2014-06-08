@@ -112,6 +112,13 @@
             value: drawScale,
             tooltip: 'hide',
         });
+        $('#stampAngle').slider({
+            min: -1,
+            max: 1,
+            step: 0.01,
+            value: drawAngle,
+            tooltip: 'hide',
+        });
         changeStampMode();
 
         var image = new Image();
@@ -248,6 +255,9 @@
                 var drawX = startX / hInvDrawScale - stampSize / 2;
                 var drawY = startY / vInvDrawScale - stampSize / 2;
                 cursorContext.save();
+                cursorContext.translate(startX, startY);
+                cursorContext.rotate(Math.PI * drawAngle);
+                cursorContext.translate(-startX, -startY);
                 cursorContext.scale(hInvDrawScale, vInvDrawScale);
                 cursorContext.drawImage($('.radio-group.selected')[0], drawX, drawY);
                 cursorContext.restore();
@@ -336,6 +346,27 @@
             var self = this;
             setTimeout(function () {
                 drawScale = self.value;
+                drawPreview();
+            }, 1);
+        });
+
+        /**
+         * スタンプ角度変更
+         */
+        $('#stampAngle').on('slide', function (e) {
+            'use strict';
+            // console.log('#stampAngle slide');
+
+            drawAngle = this.value;
+            drawPreview();
+        }).on('slideStop', function (e) {
+            'use strict';
+            // console.log('#stampAngle slideStop');
+
+            // sliderをクリックで変更した場合にslideイベントでは変更後の値を取得できないためその対策
+            var self = this;
+            setTimeout(function () {
+                drawAngle = self.value;
                 drawPreview();
             }, 1);
         });
@@ -469,6 +500,7 @@
 
             $('#brushSize').slider('enable');
             $('#stampSize').slider('disable');
+            $('#stampAngle').slider('disable');
 
             context.globalCompositeOperation = 'source-over';
             drawPreview('brush');
@@ -483,6 +515,7 @@
 
             $('#brushSize').slider('enable');
             $('#stampSize').slider('disable');
+            $('#stampAngle').slider('disable');
 
             context.globalCompositeOperation = 'destination-out';
             drawPreview('eraser');
@@ -497,6 +530,7 @@
 
             $('#brushSize').slider('disable');
             $('#stampSize').slider('enable');
+            $('#stampAngle').slider('enable');
 
             context.globalCompositeOperation = 'source-over';
             // hack : 初回表示時にpreviewが表示されないことがあるためとりあえずsetTimeoutで遅延させて対策
@@ -526,13 +560,16 @@
                 previewContext.arc(x, y, drawWidth / 2, 0, Math.PI * 2, false);
                 previewContext.fill();
             } else if (mode === 'stamp') {
-
                 // scale()は座標指定にも影響するっぽい
+                var translateOffset = previewCanvas.width / 2;
                 var hInvDrawScale = drawScale * hInversionFactor;
                 var vInvDrawScale = drawScale * vInversionFactor;
                 x = x / hInvDrawScale - stampSize / 2;
                 y = y / vInvDrawScale - stampSize / 2;
                 previewContext.save();
+                previewContext.translate(translateOffset, translateOffset);
+                previewContext.rotate(Math.PI * drawAngle);
+                previewContext.translate(-translateOffset, -translateOffset);
                 previewContext.scale(hInvDrawScale, vInvDrawScale);
                 previewContext.drawImage($('.radio-group.selected')[0], x, y);
                 previewContext.restore();
@@ -589,6 +626,9 @@
             var drawX = x / hInvDrawScale - stampSize / 2;
             var drawY = y / vInvDrawScale - stampSize / 2;
             context.save();
+            context.translate(x, y);
+            context.rotate(Math.PI * drawAngle);
+            context.translate(-x, -y);
             context.scale(hInvDrawScale, vInvDrawScale);
             context.drawImage($('.radio-group.selected')[0], drawX, drawY);
             context.restore();
