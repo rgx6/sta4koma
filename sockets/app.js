@@ -1,6 +1,6 @@
 var fs      = require('fs');
 var log4js  = require('log4js');
-var logger  = log4js.getLogger('sta4koma');
+var logger  = log4js.getLogger('appLog');
 var Promise = require('es6-promise').Promise;
 var server  = require('../server.js');
 var db      = require('./db.js');

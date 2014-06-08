@@ -1,5 +1,5 @@
 var log4js = require('log4js');
-var logger = log4js.getLogger('sta4koma');
+var logger = log4js.getLogger('appLog');
 var db = require('../sockets/db.js');
 var staApp = require('../sockets/app.js');
 
