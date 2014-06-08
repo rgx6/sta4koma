@@ -502,6 +502,9 @@
             $('#stampSize').slider('disable');
             $('#stampAngle').slider('disable');
 
+            $('#vInversion').attr('disabled', 'disabled');
+            $('#hInversion').attr('disabled', 'disabled');
+
             context.globalCompositeOperation = 'source-over';
             drawPreview('brush');
         }
@@ -517,6 +520,9 @@
             $('#stampSize').slider('disable');
             $('#stampAngle').slider('disable');
 
+            $('#vInversion').attr('disabled', 'disabled');
+            $('#hInversion').attr('disabled', 'disabled');
+
             context.globalCompositeOperation = 'destination-out';
             drawPreview('eraser');
         }
@@ -531,6 +537,9 @@
             $('#brushSize').slider('disable');
             $('#stampSize').slider('enable');
             $('#stampAngle').slider('enable');
+
+            $('#vInversion').removeAttr('disabled');
+            $('#hInversion').removeAttr('disabled');
 
             context.globalCompositeOperation = 'source-over';
             // hack : 初回表示時にpreviewが表示されないことがあるためとりあえずsetTimeoutで遅延させて対策
