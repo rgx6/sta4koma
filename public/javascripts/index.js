@@ -477,6 +477,31 @@
             return false;
         });
 
+        /**
+         * ツールメニューのフロート処理
+         */
+        $(window).scroll(function() {
+            'use strict';
+            // console.log('window scroll');
+
+            if ($('#fixMenu').hasClass('active')) return;
+
+            clearTimeout($.data(this, 'scrollTimer'));
+            $.data(this, 'scrollTimer', setTimeout(function () {
+                var floating = $(".tool-area");
+                var offset = $('#right').offset().top - 50;
+                if ($(window).scrollTop() > offset) {
+                    floating.stop().animate({
+                        marginTop: $(window).scrollTop() - offset
+                    });
+                } else {
+                    floating.stop().animate({
+                        marginTop: 0
+                    });
+                };
+            }, 100));
+        });
+
         //------------------------------
         // 関数
         //------------------------------

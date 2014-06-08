@@ -19,57 +19,59 @@ block body
             a(href="/list/1") こちら
 
         div.row
-            div.col-xs-8
+            div#left.col-xs-8
                 div.canvases
                     canvas#combinationCanvas(width="500px", height="1100px")
                     canvas#frameCanvas(width="500px", height="1100px")
                     canvas#mainCanvas(width="500px", height="1100px")
                     canvas#cursorCanvas(width="500px", height="1100px")
-            div.col-xs-4.tool-area
-                div
-                    canvas#previewCanvas(width="200px", height="200px")
-                div
-                    div.btn-group(data-toggle="buttons")
-                        label#stamp.btn.btn-default.active
-                            input(type="radio" name="tools" value="stamp")
-                            すた
-                        label#brush.btn.btn-default
-                            input(type="radio" name="tools" value="brush")
-                            描く
-                        label#eraser.btn.btn-default
-                            input(type="radio" name="tools" value="eraser")
-                            消す
-                div.slider-area
+            div#right.col-xs-4
+                div.tool-area
                     div
-                        label.label-slider 太さ
-                        input#brushSize(type="text")
+                        canvas#previewCanvas(width="200px", height="200px")
+                        button#fixMenu.btn.btn-default.active(type="button" data-toggle="button") 固定
                     div
-                        label.label-slider 大きさ
-                        input#stampSize(type="text")
+                        div.btn-group(data-toggle="buttons")
+                            label#stamp.btn.btn-default.active
+                                input(type="radio" name="tools" value="stamp")
+                                すた
+                            label#brush.btn.btn-default
+                                input(type="radio" name="tools" value="brush")
+                                描く
+                            label#eraser.btn.btn-default
+                                input(type="radio" name="tools" value="eraser")
+                                消す
+                    div.slider-area
+                        div
+                            label.label-slider 太さ
+                            input#brushSize(type="text")
+                        div
+                            label.label-slider 大きさ
+                            input#stampSize(type="text")
+                        div
+                            label.label-slider 回転
+                            input#stampAngle(type="text")
+                        div
+                            label.label-slider 反転
+                            button#vInversion.btn.btn-default(type="button" data-toggle="button") 上下
+                            button#hInversion.btn.btn-default(type="button" data-toggle="button") 左右
                     div
-                        label.label-slider 回転
-                        input#stampAngle(type="text")
+                        div
+                            label すたんぷ
+                        img#stamp1.radio-group.selected(src="/images/stamp1.png")
+                        img#stamp2.radio-group(src="/images/stamp2.png")
+                        img#stamp3.radio-group(src="/images/stamp3.png")
+                        img#stamp4.radio-group(src="/images/stamp4.png")
+                        img#stamp5.radio-group(src="/images/stamp5.png")
+                        img#stamp6.radio-group(src="/images/stamp6.png")
+                        img#stamp7.radio-group(src="/images/stamp7.png")
+                        img#stamp8.radio-group(src="/images/stamp8.png")
+                        img#stamp9.radio-group(src="/images/stamp9.png")
                     div
-                        label.label-slider 反転
-                        button#vInversion.btn.btn-default(type="button" data-toggle="button") 上下
-                        button#hInversion.btn.btn-default(type="button" data-toggle="button") 左右
-                div
-                    div
-                        label すたんぷ
-                    img#stamp1.radio-group.selected(src="/images/stamp1.png")
-                    img#stamp2.radio-group(src="/images/stamp2.png")
-                    img#stamp3.radio-group(src="/images/stamp3.png")
-                    img#stamp4.radio-group(src="/images/stamp4.png")
-                    img#stamp5.radio-group(src="/images/stamp5.png")
-                    img#stamp6.radio-group(src="/images/stamp6.png")
-                    img#stamp7.radio-group(src="/images/stamp7.png")
-                    img#stamp8.radio-group(src="/images/stamp8.png")
-                    img#stamp9.radio-group(src="/images/stamp9.png")
-                div
-                    button#post.btn.btn-info(type="button") 投稿する
-                    button#clear.btn.btn-default(type="button") クリア
-                div#tweetButtonWrapper
-                    p 投稿するとツイートボタンが出てきます
+                        button#post.btn.btn-info(type="button") 投稿する
+                        button#clear.btn.btn-default(type="button") クリア
+                    div#tweetButtonWrapper
+                        p 投稿するとツイートボタンが出てきます
         div.row
             div.col-xs-12
                 p お問い合わせ先&nbsp;
