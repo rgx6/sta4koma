@@ -10,8 +10,8 @@ var messagebase = 'すたちゅーさんの4コマまんがが{count}本投稿�
 var comicListUrl = 'http://sta4koma.rgx6.com/list/1';
 var hashtag = '#すた4コマ';
 
-// 毎時0分
-var cronTime = '* * */1 * * *';
+// 毎時0分0秒
+var cronTime = '0 0 * * * *';
 var job = new cron({
     cronTime: cronTime,
     onTick: botMainProcedure,
