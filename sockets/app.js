@@ -1,9 +1,10 @@
-var fs      = require('fs');
-var log4js  = require('log4js');
-var logger  = log4js.getLogger('appLog');
-var Promise = require('es6-promise').Promise;
-var server  = require('../server.js');
-var db      = require('./db.js');
+var fs       = require('fs');
+var log4js   = require('log4js');
+var logger   = log4js.getLogger('appLog');
+var Promise  = require('es6-promise').Promise;
+var server   = require('../server.js');
+var db       = require('./db.js');
+var tweetBot = require('./twitter_tweet_bot.js');
 
 var RESULT_OK           = 'ok';
 var RESULT_BAD_PARAM    = 'bad param';
@@ -12,6 +13,8 @@ var RESULT_SYSTEM_ERROR = 'system error';
 var TYPE_UNDEFINED = 'undefined';
 
 var NAME_LENGTH_LIMIT = 30;
+
+tweetBot.start();
 
 exports.onConnection = function (client) {
     'use strict';
