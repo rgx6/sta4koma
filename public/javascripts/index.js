@@ -11,6 +11,8 @@
         var RESULT_OK        = 'ok';
         var RESULT_BAD_PARAM = 'bad param';
 
+        var AUTHOR_KEY = "author";
+
         var NAME_LENGTH_LIMIT = 30;
 
         // サムネイルのサイズ
@@ -67,6 +69,9 @@
         var context;
         var cursorContext;
         var previewContext;
+
+        // undo用画像
+        var undoImage;
 
         // 操作可否フラグ
         var isDisabled = true;
@@ -157,6 +162,11 @@
             // console.log('mouse down');
             e.stopPropagation();
             if (isDisabled) return;
+
+            // undo
+            // MouseUpはcanvas外では発生しないためMouseDown時に取得する
+            // hack : DataURLへの変換より効率のいい方法はないか？
+            undoImage = mainCanvas.toDataURL();
 
             startX = Math.round(e.pageX) - $('#mainCanvas').offset().left;
             startY = Math.round(e.pageY) - $('#mainCanvas').offset().top;
@@ -369,6 +379,30 @@
         });
 
         /**
+         * Undoボタンをクリック
+         */
+        $('#undo').click(function () {
+            'use strict';
+            // console.log('#undo click');
+            if (isDisabled) return;
+
+            isDisabled = true;
+
+            var image = new Image();
+            image.src = undoImage;
+            image.onload = function () {
+                undoImage = mainCanvas.toDataURL();
+                context.save();
+                context.globalCompositeOperation = 'source-over';
+                context.clearRect(0, 0, $('#mainCanvas').width(), $('#mainCanvas').height());
+                context.drawImage(image, 0, 0);
+                context.restore();
+
+                isDisabled = false;
+            };
+        });
+
+        /**
          * 全部消すボタンをクリック
          */
         $('#clear').on('click', function (e) {
@@ -391,6 +425,9 @@
             e.stopPropagation();
             if (isDisabled) return;
 
+            var storedAuthor = JSON.parse(localStorage.getItem(AUTHOR_KEY));
+            if (storedAuthor) author = storedAuthor;
+
             var input = window.prompt('名前を入力してください(' + NAME_LENGTH_LIMIT + '文字以内)', author);
             if (!input) {
                 return;
@@ -402,6 +439,8 @@
             } else {
                 author = input.trim();
             }
+
+            localStorage.setItem(AUTHOR_KEY, JSON.stringify(author));
 
             // 描画不可
             isDisabled = true;

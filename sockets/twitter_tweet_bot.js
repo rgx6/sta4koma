@@ -52,7 +52,7 @@ function getNewComicCount () {
         });
         query.exec(function (err, count) {
             if (err) {
-                reject(new Error(err));
+                reject(err);
                 return;
             }
             lastCheckedTime = now;
@@ -61,6 +61,9 @@ function getNewComicCount () {
     });
 }
 
+/**
+ * 起動あるいは前回のツイートから新しく投稿された作品数をツイートする
+ */
 function tweetNewComicCount (count) {
     'use strict';
     logger.debug('tweetNewComicCount : ' + count);
@@ -76,7 +79,9 @@ function tweetNewComicCount (count) {
             return;
         }
         var message = messagebase.replace('{count}', count)
-                .replace('{hour}', lastCheckedTime.getHours())
+                // hack : ここの処理の後にlastCheckedTimeをnowで上書きしたいが、
+                //        引数が複雑になるのでとりあえず↓で対処。
+                .replace('{hour}', (lastCheckedTime.getHours() + 23) % 24)
                 .replace('{url}', comicListUrl)
                 .replace('{hashtag}', hashtag);
         twit.post('statuses/update', { status: message }, function (err) {
