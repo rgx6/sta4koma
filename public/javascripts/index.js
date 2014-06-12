@@ -32,6 +32,12 @@
                      + 'class="twitter-hashtag-button" data-lang="ja" data-size="large" '
                      + 'data-related="rgx_6" data-url="{data-url}">Tweet #{hashtag}</a>';
 
+        // マウス・タッチ対応
+        var isTouchSupported = typeof document.ontouchstart !== 'undefined';
+        var _start = isTouchSupported ? 'touchstart' : 'mousedown';
+        var _move  = isTouchSupported ? 'touchmove'  : 'mousemove';
+        var _end   = isTouchSupported ? 'touchend'   : 'mouseup';
+
         //------------------------------
         // 変数
         //------------------------------
@@ -155,12 +161,13 @@
         //------------------------------
 
         /**
-         * Canvas MouseDown イベント
+         * Canvas mousedown/touchstart イベント
          */
-        $('#cursorCanvas').mousedown(function (e) {
+        $('#cursorCanvas').on(_start, function (e) {
             'use strict';
-            // console.log('mouse down');
+            // console.log(_start);
             e.stopPropagation();
+            e.preventDefault();
             if (isDisabled) return;
 
             // undo
@@ -168,8 +175,9 @@
             // hack : DataURLへの変換より効率のいい方法はないか？
             undoImage = mainCanvas.toDataURL();
 
-            startX = Math.round(e.pageX) - $('#mainCanvas').offset().left;
-            startY = Math.round(e.pageY) - $('#mainCanvas').offset().top;
+            var point = isTouchSupported ? e.originalEvent.touches[0] : e;
+            startX = Math.round(point.pageX) - $('#mainCanvas').offset().left;
+            startY = Math.round(point.pageY) - $('#mainCanvas').offset().top;
 
             var mode = getDrawMode();
             if (mode === 'brush' || mode === 'eraser'){
@@ -184,39 +192,45 @@
         });
 
         /**
-         * Canvas MouseMove イベント
+         * Canvas mousemove/touchmove イベント
          */
-        $('#cursorCanvas').mousemove(function (e) {
+        $('#cursorCanvas').on(_move, function (e) {
             'use strict';
-            // console.log('mouse move');
+            // console.log(_move);
             e.stopPropagation();
-            if (isDisabled) return false;
+            e.preventDefault();
+            if (isDisabled) return;
+
+            var point = isTouchSupported ? e.originalEvent.touches[0] : e;
+            var endX = Math.round(point.pageX) - $('#cursorCanvas').offset().left;
+            var endY = Math.round(point.pageY) - $('#cursorCanvas').offset().top;
 
             if (drawFlag) {
-                var endX = Math.round(e.pageX) - $('#mainCanvas').offset().left;
-                var endY = Math.round(e.pageY) - $('#mainCanvas').offset().top;
                 var c = getDrawMode() === 'brush' ? color : eraseColor;
                 drawLine([startX, endX], [startY, endY], drawWidth, c);
-                startX = endX;
-                startY = endY;
             }
 
-            // chromeで描画中にマウスカーソルがIになってしまうのでその対策
-            return false;
+            startX = endX;
+            startY = endY;
+
+            // ポインタの位置にペン先を表示する
+            drawCursor(endX, endY);
         });
 
         /**
-         * Canvas MouseUp イベント
+         * Canvas mouseup/touchend イベント
          */
-        $('#cursorCanvas').mouseup(function (e) {
+        $('#cursorCanvas').on(_end, function (e) {
             'use strict';
-            // console.log('mouse up');
+            // console.log(_end);
             e.stopPropagation();
+            e.preventDefault();
             if (isDisabled) return;
 
             drawFlag = false;
         });
 
+        // hack : touchmove中にcanvas外に出た場合はtouchendが発生するようだけど本当にtouchleaveは設定不要か？
         /**
          * Canvas MouseLeave イベント
          */
@@ -224,32 +238,11 @@
             'use strict';
             // console.log('mouse leave');
             e.stopPropagation();
+            e.preventDefault();
             if (isDisabled) return;
 
             drawFlag = false;
-        });
-
-        /**
-         * マウスポインタの位置にペン先を表示する
-         */
-        $('#cursorCanvas').mousemove(function (e) {
-            'use strict';
-            // console.log('mouse move');
-            e.stopPropagation();
-            if (isDisabled) return;
-
-            startX = Math.round(e.pageX) - $('#mainCanvas').offset().left;
-            startY = Math.round(e.pageY) - $('#mainCanvas').offset().top;
-
-            drawCursor(startX, startY);
-        });
-
-        $('#cursorCanvas').mouseleave(function (e) {
-            'use strict';
-            // console.log('mouse leave');
-            e.stopPropagation();
-
-            cursorContext.clearRect(0, 0, $('#cursorCanvas').width(), $('#mainCanvas').height());
+            cursorContext.clearRect(0, 0, $('#cursorCanvas').width(), $('#cursorCanvas').height());
         });
 
         //------------------------------
@@ -655,6 +648,7 @@
         function drawCursor (x, y) {
             'use strict';
             // console.log('drawCursor');
+            if (isTouchSupported) return;
 
             cursorContext.clearRect(0, 0, $('#cursorCanvas').width(), $('#mainCanvas').height());
 
@@ -670,19 +664,19 @@
                     cursorContext.fillStyle = '#ffffff';
                 }
                 cursorContext.beginPath();
-                cursorContext.arc(startX, startY, drawWidth / 2, 0, Math.PI * 2, false);
+                cursorContext.arc(x, y, drawWidth / 2, 0, Math.PI * 2, false);
                 cursorContext.stroke();
                 cursorContext.fill();
             } else if (mode === 'stamp') {
                 // scale()は座標指定にも影響するっぽい
                 var hInvDrawScale = drawScale * hInversionFactor;
                 var vInvDrawScale = drawScale * vInversionFactor;
-                var drawX = startX / hInvDrawScale - stampSize / 2;
-                var drawY = startY / vInvDrawScale - stampSize / 2;
+                var drawX = x / hInvDrawScale - stampSize / 2;
+                var drawY = y / vInvDrawScale - stampSize / 2;
                 cursorContext.save();
-                cursorContext.translate(startX, startY);
+                cursorContext.translate(x, y);
                 cursorContext.rotate(Math.PI * drawAngle);
-                cursorContext.translate(-startX, -startY);
+                cursorContext.translate(-x, -y);
                 cursorContext.scale(hInvDrawScale, vInvDrawScale);
                 cursorContext.drawImage($('.radio-group.selected')[0], drawX, drawY);
                 cursorContext.restore();
