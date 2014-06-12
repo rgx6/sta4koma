@@ -76,8 +76,8 @@
         var cursorContext;
         var previewContext;
 
-        // undo用画像
-        var undoImage;
+        // 履歴管理
+        var history = new History(canvas, 10);
 
         // 操作可否フラグ
         var isDisabled = true;
@@ -170,10 +170,10 @@
             e.preventDefault();
             if (isDisabled) return;
 
-            // undo
+            // 履歴管理用に描画する前の状態を保存する
             // MouseUpはcanvas外では発生しないためMouseDown時に取得する
             // hack : DataURLへの変換より効率のいい方法はないか？
-            undoImage = mainCanvas.toDataURL();
+            history.save();
 
             var point = isTouchSupported ? e.originalEvent.touches[0] : e;
             startX = Math.round(point.pageX) - $('#mainCanvas').offset().left;
@@ -380,19 +380,8 @@
             if (isDisabled) return;
 
             isDisabled = true;
-
-            var image = new Image();
-            image.src = undoImage;
-            image.onload = function () {
-                undoImage = mainCanvas.toDataURL();
-                context.save();
-                context.globalCompositeOperation = 'source-over';
-                context.clearRect(0, 0, $('#mainCanvas').width(), $('#mainCanvas').height());
-                context.drawImage(image, 0, 0);
-                context.restore();
-
-                isDisabled = false;
-            };
+            history.undo();
+            isDisabled = false;
         });
 
         /**
@@ -406,6 +395,7 @@
 
             if (window.confirm('全部消しますか？')) {
                 context.clearRect(0, 0, $('#mainCanvas').width(), $('#mainCanvas').height());
+                history.clear();
             }
         });
 
@@ -812,4 +802,53 @@
             }
         }
     });
+
+    // 履歴管理クラス
+    var History = (function () {
+        'use strict';
+
+        function History(canvas, length) {
+            'use strict';
+
+            this.canvas  = canvas;
+            this.context = canvas.getContext('2d');
+            this.length  = length;
+            this.images  = [];
+        }
+
+        History.prototype.save = function () {
+            'use strict';
+            // console.log('History.save');
+
+            this.images.push(this.canvas.toDataURL());
+            if (this.images.length > this.length) this.images.shift();
+        };
+
+        History.prototype.undo = function () {
+            'use strict';
+            // console.log('History.undo');
+
+            if (this.images.length === 0) return;
+
+            var self = this;
+            var image = new Image();
+            image.src = this.images.pop();
+            image.onload = function () {
+                self.context.save();
+                self.context.globalCompositeOperation = 'source-over';
+                self.context.clearRect(0, 0, self.canvas.width, self.canvas.height);
+                self.context.drawImage(image, 0, 0);
+                self.context.restore();
+            };
+        };
+
+        History.prototype.clear = function () {
+            'use strict';
+            // console.log('History.clear');
+
+            this.images.length = 0;
+        };
+
+        return History;
+    })();
 })();
