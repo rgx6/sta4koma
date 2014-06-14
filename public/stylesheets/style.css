@@ -2,7 +2,7 @@
  * canvas
 */
 
-.canvases {
+#canvases {
   position: relative;
   height: 1200px;
   width: 600px;
@@ -11,7 +11,7 @@
   border-radius: 20px;
 }
 
-.canvases canvas {
+#canvases canvas {
   position: absolute;
   top: 50px;
   left: 50px;

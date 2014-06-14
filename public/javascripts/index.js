@@ -157,7 +157,7 @@
         /**
          * Canvas mousedown/touchstart イベント
          */
-        $('#cursorCanvas').on('mousedown touchstart', function (e) {
+        $('#canvases').on('mousedown touchstart', function (e) {
             'use strict';
             // console.log(e.type);
             e.stopPropagation();
@@ -189,7 +189,7 @@
         /**
          * Canvas mousemove/touchmove イベント
          */
-        $('#cursorCanvas').on('mousemove touchmove', function (e) {
+        $('#canvases').on('mousemove touchmove', function (e) {
             'use strict';
             // console.log(e.type);
             e.stopPropagation();
@@ -215,7 +215,7 @@
         /**
          * Canvas mouseup/touchend イベント
          */
-        $('#cursorCanvas').on('mouseup touchend', function (e) {
+        $('#canvases').on('mouseup touchend', function (e) {
             'use strict';
             // console.log(e.type);
             e.stopPropagation();
@@ -229,7 +229,7 @@
          * Canvas mouseleave/touchcancel/touchend/touchleave イベント
          * mouse/touch操作の終了、中断
          */
-        $('#cursorCanvas').on('mouseleave touchcancel touchend touchleave', function (e) {
+        $('#canvases').on('mouseleave touchcancel touchend touchleave', function (e) {
             'use strict';
             // console.log(e.type);
             e.stopPropagation();
