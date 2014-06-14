@@ -792,7 +792,7 @@
 
             var hashtag = encodeURIComponent(twitterHashtag);
             var text    = encodeURIComponent(!fileName ? twitterTextBeforePost : twitterTextAfterPost);
-            var dataUrl = !fileName ? location.href : location.href + 'c/' + fileName + '.png';
+            var dataUrl = !fileName ? location.href : location.href + 'view/' + fileName;
 
             var buttonHtml = htmlbase.replace(/\{hashtag\}/g, hashtag)
                              .replace('{text}', text).replace('{data-url}', dataUrl);
