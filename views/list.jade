@@ -23,7 +23,7 @@ block body
             ul
             each comic in comics
                 div.thumbnail
-                    a(href='/c/#{comic.fileName}.png')
+                    a(href='/view/#{comic.fileName}')
                         img(src='/c/thumb/#{comic.fileName}.thumb.png',
                             title='#{new Date(Number(comic.fileName)).toString()}',
                             alt='ファイルがないよ(´・ω・｀)')

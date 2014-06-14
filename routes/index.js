@@ -16,6 +16,7 @@ var ITEMS_PER_LOG_PAGE = 20;
 // エラーメッセージ
 var msgSystemError = '(´・ω・｀)システムエラー';
 var msgInvalidUrl  = '(´・ω・｀)不正なURL';
+var msgNotFound    = '(´・ω・｀)そんなページないよ';
 
 //------------------------------
 // routing
@@ -78,6 +79,53 @@ exports.list = function (req, res) {
             comics:         dispComicList,
             page:           page,
             totalPageCount: totalPageCount,
+        });
+    });
+};
+
+exports.view = function (req, res) {
+    'use strict';
+
+    var fileName = req.params.fileName;
+
+    if (isUndefinedOrNull(fileName) || !fileName.match(/^[1-9][0-9]*$/)) {
+        res.status(400).render('error', {
+            title:   APP_TITLE,
+            message: msgInvalidUrl,
+        });
+        return;
+    }
+
+    var query = db.Comic.findOne({ fileName: fileName }).select({ author: 1, isDeleted: 1, _id: 0 });
+    query.exec(function (err, comic) {
+        if (err) {
+            logger.error(err);
+            res.status(500).render('error', {
+                title:   APP_TITLE,
+                message: msgSystemError,
+            });
+            return;
+        }
+        if (comic === null) {
+            logger.warn('file not found : ' + fileName);
+            res.status(404).render('error', {
+                title:   APP_TITLE,
+                message: msgNotFound,
+            });
+            return;
+        }
+        if (comic.isDeleted) {
+            logger.warn('deleted file : ' + fileName);
+            res.status(404).render('error', {
+                title:   APP_TITLE,
+                message: msgNotFound,
+            });
+            return;
+        }
+
+        res.render('view', {
+            fileName: fileName,
+            author:   comic.author,
         });
     });
 };
