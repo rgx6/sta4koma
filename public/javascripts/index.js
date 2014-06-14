@@ -32,12 +32,6 @@
                      + 'class="twitter-hashtag-button" data-lang="ja" data-size="large" '
                      + 'data-related="rgx_6" data-url="{data-url}">Tweet #{hashtag}</a>';
 
-        // マウス・タッチ対応
-        var isTouchSupported = typeof document.ontouchstart !== 'undefined';
-        var _start = isTouchSupported ? 'touchstart' : 'mousedown';
-        var _move  = isTouchSupported ? 'touchmove'  : 'mousemove';
-        var _end   = isTouchSupported ? 'touchend'   : 'mouseup';
-
         //------------------------------
         // 変数
         //------------------------------
@@ -163,9 +157,9 @@
         /**
          * Canvas mousedown/touchstart イベント
          */
-        $('#cursorCanvas').on(_start, function (e) {
+        $('#cursorCanvas').on('mousedown touchstart', function (e) {
             'use strict';
-            // console.log(_start);
+            // console.log(e.type);
             e.stopPropagation();
             e.preventDefault();
             if (isDisabled) return;
@@ -175,7 +169,7 @@
             // hack : DataURLへの変換より効率のいい方法はないか？
             history.save();
 
-            var point = isTouchSupported ? e.originalEvent.touches[0] : e;
+            var point = e.type === 'touchstart' ? e.originalEvent.changedTouches[0] : e;
             startX = Math.round(point.pageX) - $('#mainCanvas').offset().left;
             startY = Math.round(point.pageY) - $('#mainCanvas').offset().top;
 
@@ -187,21 +181,22 @@
             } else if (mode === 'stamp') {
                 drawStamp(startX, startY);
             } else {
-
+                console.log('unknown mode : ' + mode);
+                alert('エラーが発生しました');
             }
         });
 
         /**
          * Canvas mousemove/touchmove イベント
          */
-        $('#cursorCanvas').on(_move, function (e) {
+        $('#cursorCanvas').on('mousemove touchmove', function (e) {
             'use strict';
-            // console.log(_move);
+            // console.log(e.type);
             e.stopPropagation();
             e.preventDefault();
             if (isDisabled) return;
 
-            var point = isTouchSupported ? e.originalEvent.touches[0] : e;
+            var point = e.type === 'touchmove' ? e.originalEvent.changedTouches[0] : e;
             var endX = Math.round(point.pageX) - $('#cursorCanvas').offset().left;
             var endY = Math.round(point.pageY) - $('#cursorCanvas').offset().top;
 
@@ -220,9 +215,9 @@
         /**
          * Canvas mouseup/touchend イベント
          */
-        $('#cursorCanvas').on(_end, function (e) {
+        $('#cursorCanvas').on('mouseup touchend', function (e) {
             'use strict';
-            // console.log(_end);
+            // console.log(e.type);
             e.stopPropagation();
             e.preventDefault();
             if (isDisabled) return;
@@ -230,19 +225,19 @@
             drawFlag = false;
         });
 
-        // hack : touchmove中にcanvas外に出た場合はtouchendが発生するようだけど本当にtouchleaveは設定不要か？
         /**
-         * Canvas MouseLeave イベント
+         * Canvas mouseleave/touchcancel/touchend/touchleave イベント
+         * mouse/touch操作の終了、中断
          */
-        $('#cursorCanvas').mouseleave(function (e) {
+        $('#cursorCanvas').on('mouseleave touchcancel touchend touchleave', function (e) {
             'use strict';
-            // console.log('mouse leave');
+            // console.log(e.type);
             e.stopPropagation();
             e.preventDefault();
             if (isDisabled) return;
 
             drawFlag = false;
-            cursorContext.clearRect(0, 0, $('#cursorCanvas').width(), $('#cursorCanvas').height());
+            clearCursor();
         });
 
         //------------------------------
@@ -587,6 +582,7 @@
             drawFlag = false;
 
             changeStampMode();
+            // hack : touchの場合は表示したくないが制御できるか？
             drawCursor(startX, startY);
         }
 
@@ -638,9 +634,8 @@
         function drawCursor (x, y) {
             'use strict';
             // console.log('drawCursor');
-            if (isTouchSupported) return;
 
-            cursorContext.clearRect(0, 0, $('#cursorCanvas').width(), $('#mainCanvas').height());
+            clearCursor();
 
             var mode = getDrawMode();
             if (mode === 'brush' || mode === 'eraser') {
@@ -729,6 +724,16 @@
             context.scale(hInvDrawScale, vInvDrawScale);
             context.drawImage($('.radio-group.selected')[0], drawX, drawY);
             context.restore();
+        }
+
+        /**
+         * CursorCanvas クリア
+         */
+        function clearCursor () {
+            'use strict';
+            // console.log('clearCursor');
+
+            cursorContext.clearRect(0, 0, $('#cursorCanvas').width(), $('#cursorCanvas').height());
         }
 
         /**
