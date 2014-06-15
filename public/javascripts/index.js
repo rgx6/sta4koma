@@ -16,13 +16,25 @@
         var NAME_LENGTH_LIMIT = 30;
 
         // サムネイルのサイズ
-        var thumbnailWidth        = 250;
-        var thumbnailHeight       = 175;
-        var thumbnailSourceWidth  = 500;
-        var thumbnailSourceHeight = 350;
+        var THUMBNAIL_WIDTH         = 250;
+        var THUMBNAIL_HEIGHT        = 175;
+        var THUMBNAIL_SOURCE_WIDTH  = 500;
+        var THUMBNAIL_SOURCE_HEIGHT = 350;
 
         // スタンプの元の画像のサイズ(正方形を想定)
-        var stampSize = 250;
+        var STAMP_SIZE = 250;
+
+        // slider
+        var BRUSH_SIZE_MIN   = 1;
+        var BRUSH_SIZE_MAX   = 20;
+        var BRUSH_SIZE_STEP  = 1;
+        var STAMP_SIZE_MIN   = 0.01;
+        var STAMP_SIZE_MAX   = 2;
+        var STAMP_SIZE_STEP  = 0.01;
+        var STAMP_ANGLE_MIN  = -1;
+        var STAMP_ANGLE_MAX  = 1;
+        var STAMP_ANGLE_STEP = 0.01;
+        var WHEEL_SCALE      = 5;
 
         // tweetボタン関連
         var twitterHashtag = '#すた4コマ';
@@ -44,7 +56,7 @@
         // 描画する始点のY座標
         var startY;
         // 描画する色
-        var color = 'rgba(0, 0, 0, 1)';
+        var color      = 'rgba(0, 0, 0, 1)';
         var eraseColor = 'rgba(0, 0, 0, 1)';
         // 描画する線の太さ
         var drawWidth = 3;
@@ -79,6 +91,11 @@
         // 描いた人の名前
         var author = '名無しさん';
 
+        // ホイール操作用ショートカットキー
+        var key_width_pressed    = false;
+        var key_size_pressed     = false;
+        var key_rotation_pressed = false;
+
         //------------------------------
         // 準備
         //------------------------------
@@ -104,23 +121,24 @@
 
         // slider初期化
         $('#brushSize').slider({
-            min: 1,
-            max: 20,
+            min: BRUSH_SIZE_MIN,
+            max: BRUSH_SIZE_MAX,
+            step: BRUSH_SIZE_STEP,
             value: drawWidth,
             tooltip: 'hide',
         });
         $('#stampSize').slider({
             // min: 0 だとubuntuのfxで0にした後の挙動がおかしかったので0.01に設定
-            min: 0.01,
-            max: 2,
-            step: 0.01,
+            min: STAMP_SIZE_MIN,
+            max: STAMP_SIZE_MAX,
+            step: STAMP_SIZE_STEP,
             value: drawScale,
             tooltip: 'hide',
         });
         $('#stampAngle').slider({
-            min: -1,
-            max: 1,
-            step: 0.01,
+            min: STAMP_ANGLE_MIN,
+            max: STAMP_ANGLE_MAX,
+            step: STAMP_ANGLE_STEP,
             value: drawAngle,
             tooltip: 'hide',
         });
@@ -484,6 +502,22 @@
         /**
          * キーボードショートカット
          */
+        $(window).on('keydown keyup', function (e) {
+            'use strict';
+            // console.log('window ' + e.type + ' ' + e.keyCode);
+
+            switch(e.keyCode) {
+                case 82: // R
+                    key_rotation_pressed = e.type === 'keydown';
+                    break;
+                case 83: // S
+                    key_size_pressed = e.type === 'keydown';
+                    break;
+                case 87: // W
+                    key_width_pressed = e.type === 'keydown';
+                    break;
+            }
+        });
         $(window).keyup(function (e) {
             'use strict';
             // console.log('window keyup ' + e.keyCode);
@@ -492,6 +526,38 @@
             if (49 <= e.keyCode && e.keyCode <= 57) {
                 var stampId = '#stamp' + (e.keyCode - 48);
                 selectStamp(stampId);
+            }
+        });
+        $(window).on('wheel', function (e) {
+            'use strict';
+            // console.log('wheel');
+
+            var delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+
+            if (key_width_pressed) {
+                e.preventDefault();
+                var newWidth = Number(drawWidth) + delta * BRUSH_SIZE_STEP;
+                newWidth = Math.max(newWidth, BRUSH_SIZE_MIN);
+                newWidth = Math.min(newWidth, BRUSH_SIZE_MAX);
+                drawWidth = newWidth;
+                $('#brushSize').slider('setValue', drawWidth);
+                drawPreview();
+            } else if (key_size_pressed) {
+                e.preventDefault();
+                var newScale = Number(drawScale) + delta * STAMP_SIZE_STEP * WHEEL_SCALE;
+                newScale = Math.max(newScale, STAMP_SIZE_MIN);
+                newScale = Math.min(newScale, STAMP_SIZE_MAX);
+                drawScale = newScale;
+                $('#stampSize').slider('setValue', drawScale);
+                drawPreview();
+            } else if (key_rotation_pressed) {
+                e.preventDefault();
+                var newAngle = Number(drawAngle) + delta * STAMP_ANGLE_STEP * WHEEL_SCALE;
+                if (newAngle > STAMP_ANGLE_MAX) newAngle = STAMP_ANGLE_MIN;
+                else if (newAngle < STAMP_ANGLE_MIN) newAngle = STAMP_ANGLE_MAX;
+                drawAngle = newAngle;
+                $('#stampAngle').slider('setValue', drawAngle);
+                drawPreview();
             }
         });
 
@@ -613,8 +679,8 @@
                 var translateOffset = previewCanvas.width / 2;
                 var hInvDrawScale = drawScale * hInversionFactor;
                 var vInvDrawScale = drawScale * vInversionFactor;
-                x = x / hInvDrawScale - stampSize / 2;
-                y = y / vInvDrawScale - stampSize / 2;
+                x = x / hInvDrawScale - STAMP_SIZE / 2;
+                y = y / vInvDrawScale - STAMP_SIZE / 2;
                 previewContext.save();
                 previewContext.translate(translateOffset, translateOffset);
                 previewContext.rotate(Math.PI * drawAngle);
@@ -656,8 +722,8 @@
                 // scale()は座標指定にも影響するっぽい
                 var hInvDrawScale = drawScale * hInversionFactor;
                 var vInvDrawScale = drawScale * vInversionFactor;
-                var drawX = x / hInvDrawScale - stampSize / 2;
-                var drawY = y / vInvDrawScale - stampSize / 2;
+                var drawX = x / hInvDrawScale - STAMP_SIZE / 2;
+                var drawY = y / vInvDrawScale - STAMP_SIZE / 2;
                 cursorContext.save();
                 cursorContext.translate(x, y);
                 cursorContext.rotate(Math.PI * drawAngle);
@@ -715,8 +781,8 @@
             // scale()は座標指定にも影響するっぽい
             var hInvDrawScale = drawScale * hInversionFactor;
             var vInvDrawScale = drawScale * vInversionFactor;
-            var drawX = x / hInvDrawScale - stampSize / 2;
-            var drawY = y / vInvDrawScale - stampSize / 2;
+            var drawX = x / hInvDrawScale - STAMP_SIZE / 2;
+            var drawY = y / vInvDrawScale - STAMP_SIZE / 2;
             context.save();
             context.translate(x, y);
             context.rotate(Math.PI * drawAngle);
@@ -769,13 +835,13 @@
             // console.log('getThumbnailPng');
 
             var thumbnailCanvas = document.createElement('canvas');
-            thumbnailCanvas.width = thumbnailWidth;
-            thumbnailCanvas.height = thumbnailHeight;
+            thumbnailCanvas.width = THUMBNAIL_WIDTH;
+            thumbnailCanvas.height = THUMBNAIL_HEIGHT;
             var thumbnailContext = thumbnailCanvas.getContext('2d');
             thumbnailContext.drawImage(
                 combinationCanvas,
-                0, 0, thumbnailSourceWidth, thumbnailSourceHeight,
-                0, 0, thumbnailWidth, thumbnailHeight);
+                0, 0, THUMBNAIL_SOURCE_WIDTH, THUMBNAIL_SOURCE_HEIGHT,
+                0, 0, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
 
             var dataUrl = thumbnailCanvas.toDataURL('image/png');
             return dataUrl.split(',')[1];
