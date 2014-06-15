@@ -522,10 +522,35 @@
             'use strict';
             // console.log('window keyup ' + e.keyCode);
 
-            // スタンプの種類
             if (49 <= e.keyCode && e.keyCode <= 57) {
+                // スタンプの種類 0-9
                 var stampId = '#stamp' + (e.keyCode - 48);
                 selectStamp(stampId);
+            } else if (e.keyCode === 66) {
+                // B
+                changeBrushMode();
+                $('.btn-group>label').removeClass('active');
+                $('#brush').addClass('active');
+            } else if (e.keyCode === 69) {
+                // E
+                changeEraserMode();
+                $('.btn-group>label').removeClass('active');
+                $('#eraser').addClass('active');
+            } else if (e.keyCode === 72) {
+                // H
+                hInversionFactor *= -1;
+                $('#hInversion').button('toggle');
+                drawPreview();
+            } else if (e.keyCode === 86) {
+                // V
+                vInversionFactor *= -1;
+                $('#vInversion').button('toggle');
+                drawPreview();
+            } else if (e.keyCode === 90) {
+                // Z
+                isDisabled = true;
+                history.undo();
+                isDisabled = false;
             }
         });
         $(window).on('wheel', function (e) {
