@@ -96,6 +96,9 @@
         var key_size_pressed     = false;
         var key_rotation_pressed = false;
 
+        // ペンタブレットプラグイン
+        var plugin;
+
         //------------------------------
         // 準備
         //------------------------------
@@ -195,7 +198,7 @@
             if (mode === 'brush' || mode === 'eraser'){
                 drawFlag = true;
                 var c = mode === 'brush' ? color : eraseColor;
-                drawPoint(startX, startY, drawWidth, c);
+                drawPoint(startX, startY, drawWidth * getPressure(), c);
             } else if (mode === 'stamp') {
                 drawStamp(startX, startY);
             } else {
@@ -220,7 +223,7 @@
 
             if (drawFlag) {
                 var c = getDrawMode() === 'brush' ? color : eraseColor;
-                drawLine([startX, endX], [startY, endY], drawWidth, c);
+                drawLine([startX, endX], [startY, endY], drawWidth * getPressure(), c);
             }
 
             startX = endX;
@@ -541,6 +544,17 @@
                 hInversionFactor *= -1;
                 $('#hInversion').button('toggle');
                 drawPreview();
+            } else if (e.keyCode === 80) {
+                // P 筆圧機能切替
+                if (plugin) {
+                    // console.log('pressure mode off');
+                    $('#pentablet').html('');
+                    plugin = null;
+                } else {
+                    // console.log('pressure mode on');
+                    $('#pentablet').html('<object type="application/x-wacomtabletplugin"></object>');
+                    plugin = document.querySelector('object[type="application/x-wacomtabletplugin"]');
+                }
             } else if (e.keyCode === 86) {
                 // V
                 vInversionFactor *= -1;
@@ -694,7 +708,6 @@
             if (typeof forcedMode !== 'undefined') mode = forcedMode;
             if (mode === 'brush' || mode === 'eraser') {
                 // IEとChromeではlineToで点を描画できないようなので、多少ぼやけるがarcを使う。
-                // 見た目がカクカクするのでoffset調整しない
                 previewContext.fillStyle = '#000000';
                 previewContext.beginPath();
                 previewContext.arc(x, y, drawWidth / 2, 0, Math.PI * 2, false);
@@ -730,7 +743,11 @@
 
             var mode = getDrawMode();
             if (mode === 'brush' || mode === 'eraser') {
-                if (mode === 'brush') {
+                if (plugin && plugin.penAPI && plugin.penAPI.isWacom) {
+                    cursorContext.lineWidth = 1;
+                    cursorContext.strokeStyle = color;
+                    cursorContext.fillStyle = 'rgba(0,0,0,0)';
+                } else if (mode === 'brush') {
                     cursorContext.lineWidth = 0;
                     cursorContext.strokeStyle = color;
                     cursorContext.fillStyle = color;
@@ -769,14 +786,13 @@
             'use strict';
             // console.log('drawLine');
 
-            var offset = drawWidth % 2 === 0 ? 0 : 0.5;
             context.strokeStyle = color;
             context.fillStyle = color;
             context.lineWidth = width;
             context.beginPath();
-            context.moveTo(x[0] - offset, y[0] - offset);
+            context.moveTo(x[0], y[0]);
             for (var i = 1; i < x.length; i += 1) {
-                context.lineTo(x[i] - offset, y[i] -offset);
+                context.lineTo(x[i], y[i]);
             }
             context.stroke();
         }
@@ -895,6 +911,21 @@
             } else {
                 // ページ読み込み時はload()の読み込みに失敗するようなので遅延させる
                 setTimeout(function () { twttr.widgets.load(); }, 3000);
+            }
+        }
+
+        /**
+         * 筆圧取得
+         */
+        function getPressure () {
+            'use strict';
+            // console.log('getPressure');
+
+            // 筆圧取得
+            if (plugin && plugin.penAPI && plugin.penAPI.isWacom) {
+                return plugin.penAPI.pressure > 0 ? plugin.penAPI.pressure : 1;
+            } else {
+                return 1;
             }
         }
     });
