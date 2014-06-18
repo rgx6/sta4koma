@@ -195,7 +195,7 @@
             startY = Math.round(point.pageY) - $('#mainCanvas').offset().top;
 
             var mode = getDrawMode();
-            if (mode === 'brush' || mode === 'eraser'){
+            if (mode === 'brush' || mode === 'eraser') {
                 drawFlag = true;
                 var c = mode === 'brush' ? color : eraseColor;
                 drawPoint(startX, startY, drawWidth * getPressure(), c);
@@ -923,7 +923,7 @@
 
             // 筆圧取得
             if (plugin && plugin.penAPI && plugin.penAPI.isWacom) {
-                return plugin.penAPI.pressure > 0 ? plugin.penAPI.pressure : 1;
+                return plugin.penAPI.pressure;
             } else {
                 return 1;
             }
