@@ -153,6 +153,9 @@
             frameContext.drawImage(image, 0, 0);
         };
 
+        // 確率でスタンプ画像を変更
+        if (Math.random() * 100 < 3) changeStampSet();
+
         // serverに接続
         // hack : 必要になってから接続すればいいか？
         socket = io.connect();
@@ -791,9 +794,7 @@
             context.lineWidth = width;
             context.beginPath();
             context.moveTo(x[0], y[0]);
-            for (var i = 1; i < x.length; i += 1) {
-                context.lineTo(x[i], y[i]);
-            }
+            context.lineTo(x[1], y[1]);
             context.stroke();
         }
 
@@ -927,6 +928,19 @@
             } else {
                 return 1;
             }
+        }
+
+        /**
+         * スタンプ画像変更
+         */
+        function changeStampSet () {
+            'use strict';
+            // console.log('changeStampSet');
+
+            $('.radio-group').each(function () {
+                $(this).attr('id').match(/stamp(\d+)/);
+                $(this).attr('src', '/images/stamp' + RegExp.$1 + 'b.png');
+            });
         }
     });
 
