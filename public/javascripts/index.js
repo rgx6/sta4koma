@@ -709,7 +709,7 @@
             // console.log('changeWordMode');
 
             var input = window.prompt('文字を入力してください', word);
-            if (input.trim()) { word = input.trim(); }
+            if (input != null && input.trim()) { word = input.trim(); }
 
             $('#brushSize').slider('disable');
             $('#stampSize').slider('enable');
