@@ -91,6 +91,9 @@
         // 描いた人の名前
         var author = '名無しさん';
 
+        // 文字
+        var word = 'うどん';
+
         // ホイール操作用ショートカットキー
         var key_width_pressed    = false;
         var key_size_pressed     = false;
@@ -115,12 +118,21 @@
         context = canvas.getContext('2d');
         context.lineCap = 'round';
         context.lineJoin = 'round';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.font = '100px \'\'';
 
         cursorContext = cursorCanvas.getContext('2d');
+        cursorContext.textAlign = 'center';
+        cursorContext.textBaseline = 'middle';
+        cursorContext.font = '100px \'\'';
 
         previewContext = previewCanvas.getContext('2d');
         previewContext.lineCap = 'round';
         previewContext.lineJoin = 'round';
+        previewContext.textAlign = 'center';
+        previewContext.textBaseline = 'middle';
+        previewContext.font = '100px \'\'';
 
         // slider初期化
         $('#brushSize').slider({
@@ -204,6 +216,8 @@
                 drawPoint(startX, startY, drawWidth * getPressure(), c);
             } else if (mode === 'stamp') {
                 drawStamp(startX, startY);
+            } else if (mode === 'word') {
+                drawWord(startX, startY);
             } else {
                 console.log('unknown mode : ' + mode);
                 alert('エラーが発生しました');
@@ -296,6 +310,16 @@
             // console.log('#stamp click');
 
             changeStampMode();
+        });
+
+        /**
+         * 文字を選択
+         */
+        $('#word').click(function () {
+            'use strict';
+            // console.log('#word click');
+
+            changeWordMode();
         });
 
         /**
@@ -537,6 +561,11 @@
                 changeBrushMode();
                 $('.btn-group>label').removeClass('active');
                 $('#brush').addClass('active');
+            } else if (e.keyCode === 67) {
+                // C
+                changeWordMode();
+                $('.btn-group>label').removeClass('active');
+                $('#word').addClass('active');
             } else if (e.keyCode === 69) {
                 // E
                 changeEraserMode();
@@ -673,6 +702,27 @@
         }
 
         /**
+         * 描画モードを文字に変更する
+         */
+        function changeWordMode () {
+            'use strict';
+            // console.log('changeWordMode');
+
+            var input = window.prompt('文字を入力してください', word);
+            if (input.trim()) { word = input.trim(); }
+
+            $('#brushSize').slider('disable');
+            $('#stampSize').slider('enable');
+            $('#stampAngle').slider('enable');
+
+            $('#vInversion').removeAttr('disabled');
+            $('#hInversion').removeAttr('disabled');
+
+            context.globalCompositeOperation = 'source-over';
+            drawPreview('word');
+        }
+
+        /**
          * スタンプの種類を変更
          */
         function selectStamp (stampId) {
@@ -729,6 +779,21 @@
                 previewContext.scale(hInvDrawScale, vInvDrawScale);
                 previewContext.drawImage($('.radio-group.selected')[0], x, y);
                 previewContext.restore();
+            } else if (mode === 'word') {
+                // scale()は座標指定にも影響するっぽい
+                var translateOffset = previewCanvas.width / 2;
+                var hInvDrawScale = drawScale * hInversionFactor;
+                var vInvDrawScale = drawScale * vInversionFactor;
+                x = x / hInvDrawScale;
+                y = y / vInvDrawScale;
+                previewContext.save();
+                previewContext.translate(translateOffset, translateOffset);
+                previewContext.rotate(Math.PI * drawAngle);
+                previewContext.translate(-translateOffset, -translateOffset);
+                previewContext.scale(hInvDrawScale, vInvDrawScale);
+                previewContext.fillStyle = color;
+                previewContext.fillText(word, x, y);
+                previewContext.restore();
             } else {
                 console.log('unknown mode : ' + mode);
                 alert('エラーが発生しました');
@@ -775,6 +840,20 @@
                 cursorContext.translate(-x, -y);
                 cursorContext.scale(hInvDrawScale, vInvDrawScale);
                 cursorContext.drawImage($('.radio-group.selected')[0], drawX, drawY);
+                cursorContext.restore();
+            } else if (mode === 'word') {
+                // scale()は座標指定にも影響するっぽい
+                var hInvDrawScale = drawScale * hInversionFactor;
+                var vInvDrawScale = drawScale * vInversionFactor;
+                var drawX = x / hInvDrawScale;
+                var drawY = y / vInvDrawScale;
+                cursorContext.save();
+                cursorContext.translate(x, y);
+                cursorContext.rotate(Math.PI * drawAngle);
+                cursorContext.translate(-x, -y);
+                cursorContext.scale(hInvDrawScale, vInvDrawScale);
+                cursorContext.fillStyle = color;
+                cursorContext.fillText(word, drawX, drawY);
                 cursorContext.restore();
             } else {
                 console.log('unknown mode : ' + mode);
@@ -831,6 +910,27 @@
             context.translate(-x, -y);
             context.scale(hInvDrawScale, vInvDrawScale);
             context.drawImage($('.radio-group.selected')[0], drawX, drawY);
+            context.restore();
+        }
+
+        /**
+         * Canvas 文字を描画する
+         */
+        function drawWord (x, y) {
+            'use strict';
+            // console.log('drawWord');
+
+            var hInvDrawScale = drawScale * hInversionFactor;
+            var vInvDrawScale = drawScale * vInversionFactor;
+            var drawX = x / hInvDrawScale;
+            var drawY = y / vInvDrawScale;
+            context.save();
+            context.translate(x, y);
+            context.rotate(Math.PI * drawAngle);
+            context.translate(-x, -y);
+            context.scale(hInvDrawScale, vInvDrawScale);
+            context.fillStyle = color;
+            context.fillText(word, drawX, drawY);
             context.restore();
         }
 
