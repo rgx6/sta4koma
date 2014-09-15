@@ -15,7 +15,7 @@ var TYPE_UNDEFINED = 'undefined';
 
 var NAME_LENGTH_LIMIT = 30;
 
-if (config.sonsumer_key) tweetBot.start();
+if (config.consumer_key) tweetBot.start();
 
 exports.onConnection = function (client) {
     'use strict';

@@ -25,7 +25,7 @@ if (config.consumer_key) {
 
     exports.start = function () {
         'use strict';
-        logger.debug('twitter_tweet_bot start');
+        logger.info('twitter_tweet_bot start');
 
         job.start();
     };
