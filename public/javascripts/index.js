@@ -58,13 +58,17 @@
         // 描画する色
         var color      = 'rgba(0, 0, 0, 1)';
         var eraseColor = 'rgba(0, 0, 0, 1)';
-        // 各モードのサイズ、角度の保存用 兼 初期値
-        var drawSizeBrush  = 3;
-        var drawSizeEraser = 3;
-        var drawSizeStamp  = 0.5;
-        var drawSizeWord   = 0.5;
-        var drawAngleStamp = 0;
-        var drawAngleWord  = 0;
+        // サイズ初期値
+        var initialDrawWidth = 3;
+        var initialDrawScale = 0.5;
+        var initialDrawAngle = 0;
+        // 各モードのサイズ、角度の保存用
+        var drawSizeBrush  = initialDrawWidth;
+        var drawSizeEraser = initialDrawWidth;
+        var drawSizeStamp  = initialDrawScale;
+        var drawSizeWord   = initialDrawScale;
+        var drawAngleStamp = initialDrawAngle;
+        var drawAngleWord  = initialDrawAngle;
         // 描画する線の太さ
         var drawWidth = drawSizeBrush;
         // スタンプ描画倍率
@@ -342,7 +346,7 @@
             } else if (mode === 'eraser') {
                 drawSizeEraser = drawWidth;
             } else {
-                console.error('invalid mode');
+                alert('予期しないエラー');
             }
             drawPreview();
         }).on('slideStop', function (e) {
@@ -359,7 +363,7 @@
                 } else if (mode === 'eraser') {
                     drawSizeEraser = drawWidth;
                 } else {
-                    console.error('invalid mode');
+                    alert('予期しないエラー');
                 }
                 drawPreview();
             }, 1);
@@ -379,7 +383,7 @@
             } else if (mode === 'word') {
                 drawSizeWord = drawScale;
             } else {
-                console.error('invalid mode');
+                alert('予期しないエラー');
             }
             drawPreview();
         }).on('slideStop', function (e) {
@@ -396,7 +400,7 @@
                 } else if (mode === 'word') {
                     drawSizeWord = drawScale;
                 } else {
-                    console.error('invalid mode');
+                    alert('予期しないエラー');
                 }
                 drawPreview();
             }, 1);
@@ -416,7 +420,7 @@
             } else if (mode === 'word') {
                 drawAngleWord = drawAngle;
             } else {
-                console.error('invalid mode');
+                alert('予期しないエラー');
             }
             drawPreview();
         }).on('slideStop', function (e) {
@@ -433,7 +437,7 @@
                 } else if (mode === 'word') {
                     drawAngleWord = drawAngle;
                 } else {
-                    console.error('invalid mode');
+                    alert('予期しないエラー');
                 }
                 drawPreview();
             }, 1);
@@ -466,6 +470,65 @@
 
             var stampId = '#' + $(this).attr('id');
             selectStamp(stampId);
+        });
+
+        /**
+         * サイズラベル クリックで初期値に戻す
+         */
+        $('#brushSizeLabel').on('click', function (e) {
+            'use strict';
+            // console.log('#brushSizeLabel click');
+
+            var mode = getDrawMode();
+            if (mode === 'brush') {
+                drawWidth = initialDrawWidth;
+                drawSizeBrush = drawWidth;
+                $('#brushSize').slider('setValue', drawWidth);
+                drawPreview();
+            } else if (mode === 'eraser') {
+                drawWidth = initialDrawWidth;
+                drawSizeEraser = drawWidth;
+                $('#brushSize').slider('setValue', drawWidth);
+                drawPreview();
+            }
+        });
+        $('#stampSizeLabel').on('click', function (e) {
+            'use strict';
+            // console.log('#stampSizeLabel click');
+
+            var mode = getDrawMode();
+            if (mode === 'stamp') {
+                drawScale = initialDrawScale;
+                drawSizeStamp = drawScale;
+                $('#stampSize').slider('setValue', drawScale);
+                drawPreview();
+            } else if (mode === 'word') {
+                drawScale = initialDrawScale;
+                drawSizeWord = drawScale;
+                $('#stampSize').slider('setValue', drawScale);
+                drawPreview();
+            }
+        });
+
+        /**
+         * 回転ラベル クリックで初期値に戻す
+         */
+        $('#stampAngleLabel').on('click', function (e) {
+            'use strict';
+            // console.log('#stampAngelLabel click');
+
+            var mode = getDrawMode();
+            if (mode === 'stamp') {
+                drawAngle = 0;
+                drawAngleStamp = drawAngle;
+                $('#stampAngle').slider('setValue', drawAngle);
+                drawPreview();
+            } else if (mode === 'word') {
+                drawAngle = 0;
+                drawAngleWord = drawAngle;
+                $('#stampAngle').slider('setValue', drawAngle);
+                drawPreview();
+            }
         });
 
         /**
@@ -676,7 +739,7 @@
                 } else if (mode === 'eraser') {
                     drawSizeEraser = drawWidth;
                 } else {
-                    console.error('invalid mode');
+                    alert('予期しないエラー');
                 }
                 $('#brushSize').slider('setValue', drawWidth);
                 drawPreview();
@@ -693,7 +756,7 @@
                 } else if (mode === 'word') {
                     drawSizeWord = drawScale;
                 } else {
-                    console.error('invalid mode');
+                    alert('予期しないエラー');
                 }
                 $('#stampSize').slider('setValue', drawScale);
                 drawPreview();
@@ -710,7 +773,7 @@
                 } else if (mode === 'word') {
                     drawAngleWord = drawAngle;
                 } else {
-                    console.error('invalid mode');
+                    alert('予期しないエラー');
                 }
                 $('#stampAngle').slider('setValue', drawAngle);
                 drawPreview();
