@@ -58,12 +58,19 @@
         // 描画する色
         var color      = 'rgba(0, 0, 0, 1)';
         var eraseColor = 'rgba(0, 0, 0, 1)';
+        // 各モードのサイズ、角度の保存用 兼 初期値
+        var drawSizeBrush  = 3;
+        var drawSizeEraser = 3;
+        var drawSizeStamp  = 0.5;
+        var drawSizeWord   = 0.5;
+        var drawAngleStamp = 0;
+        var drawAngleWord  = 0;
         // 描画する線の太さ
-        var drawWidth = 3;
+        var drawWidth = drawSizeBrush;
         // スタンプ描画倍率
-        var drawScale = 0.5;
+        var drawScale = drawSizeStamp;
         // スタンプ回転
-        var drawAngle = 0;
+        var drawAngle = drawAngleStamp;
         // 反転
         var vInversionFactor = 1;
         var hInversionFactor = 1;
@@ -143,7 +150,6 @@
             tooltip: 'hide',
         });
         $('#stampSize').slider({
-            // min: 0 だとubuntuのfxで0にした後の挙動がおかしかったので0.01に設定
             min: STAMP_SIZE_MIN,
             max: STAMP_SIZE_MAX,
             step: STAMP_SIZE_STEP,
@@ -330,6 +336,14 @@
             // console.log('#brushSize slide');
 
             drawWidth = this.value;
+            var mode = getDrawMode();
+            if (mode === 'brush') {
+                drawSizeBrush = drawWidth;
+            } else if (mode === 'eraser') {
+                drawSizeEraser = drawWidth;
+            } else {
+                console.error('invalid mode');
+            }
             drawPreview();
         }).on('slideStop', function (e) {
             'use strict';
@@ -339,6 +353,14 @@
             var self = this;
             setTimeout(function () {
                 drawWidth = self.value;
+                var mode = getDrawMode();
+                if (mode === 'brush') {
+                    drawSizeBrush = drawWidth;
+                } else if (mode === 'eraser') {
+                    drawSizeEraser = drawWidth;
+                } else {
+                    console.error('invalid mode');
+                }
                 drawPreview();
             }, 1);
         });
@@ -351,6 +373,14 @@
             // console.log('#stampSize slide');
 
             drawScale = this.value;
+            var mode = getDrawMode();
+            if (mode === 'stamp') {
+                drawSizeStamp = drawScale;
+            } else if (mode === 'word') {
+                drawSizeWord = drawScale;
+            } else {
+                console.error('invalid mode');
+            }
             drawPreview();
         }).on('slideStop', function (e) {
             'use strict';
@@ -360,6 +390,14 @@
             var self = this;
             setTimeout(function () {
                 drawScale = self.value;
+                var mode = getDrawMode();
+                if (mode === 'stamp') {
+                    drawSizeStamp = drawScale;
+                } else if (mode === 'word') {
+                    drawSizeWord = drawScale;
+                } else {
+                    console.error('invalid mode');
+                }
                 drawPreview();
             }, 1);
         });
@@ -372,6 +410,14 @@
             // console.log('#stampAngle slide');
 
             drawAngle = this.value;
+            var mode = getDrawMode();
+            if (mode === 'stamp') {
+                drawAngleStamp = drawAngle;
+            } else if (mode === 'word') {
+                drawAngleWord = drawAngle;
+            } else {
+                console.error('invalid mode');
+            }
             drawPreview();
         }).on('slideStop', function (e) {
             'use strict';
@@ -381,6 +427,14 @@
             var self = this;
             setTimeout(function () {
                 drawAngle = self.value;
+                var mode = getDrawMode();
+                if (mode === 'stamp') {
+                    drawAngleStamp = drawAngle;
+                } else if (mode === 'word') {
+                    drawAngleWord = drawAngle;
+                } else {
+                    console.error('invalid mode');
+                }
                 drawPreview();
             }, 1);
         });
@@ -604,29 +658,60 @@
             // console.log('wheel');
 
             var delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+            var mode = getDrawMode();
+
+            // todo : 整理したい
+            // todo : キーボードショートカットをbrush/eraserとstamp/wordで共通化したい
 
             if (key_width_pressed) {
                 e.preventDefault();
+                if (mode !== 'brush' && mode !== 'eraser') return;
+
                 var newWidth = Number(drawWidth) + delta * BRUSH_SIZE_STEP;
                 newWidth = Math.max(newWidth, BRUSH_SIZE_MIN);
                 newWidth = Math.min(newWidth, BRUSH_SIZE_MAX);
                 drawWidth = newWidth;
+                if (mode === 'brush') {
+                    drawSizeBrush = drawWidth;
+                } else if (mode === 'eraser') {
+                    drawSizeEraser = drawWidth;
+                } else {
+                    console.error('invalid mode');
+                }
                 $('#brushSize').slider('setValue', drawWidth);
                 drawPreview();
             } else if (key_size_pressed) {
                 e.preventDefault();
+                if (mode !== 'stamp' && mode !== 'word') return;
+
                 var newScale = Number(drawScale) + delta * STAMP_SIZE_STEP * WHEEL_SCALE;
                 newScale = Math.max(newScale, STAMP_SIZE_MIN);
                 newScale = Math.min(newScale, STAMP_SIZE_MAX);
                 drawScale = newScale;
+                if (mode === 'stamp') {
+                    drawSizeStamp = drawScale;
+                } else if (mode === 'word') {
+                    drawSizeWord = drawScale;
+                } else {
+                    console.error('invalid mode');
+                }
                 $('#stampSize').slider('setValue', drawScale);
                 drawPreview();
             } else if (key_rotation_pressed) {
                 e.preventDefault();
+                if (mode !== 'stamp' && mode !== 'word') return;
+
                 var newAngle = Number(drawAngle) + delta * STAMP_ANGLE_STEP * WHEEL_SCALE;
                 if (newAngle > STAMP_ANGLE_MAX) newAngle = STAMP_ANGLE_MIN;
                 else if (newAngle < STAMP_ANGLE_MIN) newAngle = STAMP_ANGLE_MAX;
                 drawAngle = newAngle;
+                if (mode === 'stamp') {
+                    drawAngleStamp = drawAngle;
+                } else if (mode === 'word') {
+                    drawAngleWord = drawAngle;
+                } else {
+                    console.error('invalid mode');
+                }
                 $('#stampAngle').slider('setValue', drawAngle);
                 drawPreview();
             }
@@ -653,8 +738,11 @@
             'use strict';
             // console.log('changeBrushMode');
 
-            $('#brushSize').slider('enable');
-            $('#stampSize').slider('disable');
+            drawWidth = drawSizeBrush;
+            $('#brushSize').slider('setValue', Number(drawWidth));
+
+            $('#brushSizeDiv').css('display', '');
+            $('#stampSizeDiv').css('display', 'none');
             $('#stampAngle').slider('disable');
 
             $('#vInversion').attr('disabled', 'disabled');
@@ -671,8 +759,11 @@
             'use strict';
             // console.log('changeEraserMode');
 
-            $('#brushSize').slider('enable');
-            $('#stampSize').slider('disable');
+            drawWidth = drawSizeEraser;
+            $('#brushSize').slider('setValue', Number(drawWidth));
+
+            $('#brushSizeDiv').css('display', '');
+            $('#stampSizeDiv').css('display', 'none');
             $('#stampAngle').slider('disable');
 
             $('#vInversion').attr('disabled', 'disabled');
@@ -689,8 +780,13 @@
             'use strict';
             // console.log('changeStampMode');
 
-            $('#brushSize').slider('disable');
-            $('#stampSize').slider('enable');
+            drawScale = drawSizeStamp;
+            drawAngle = drawAngleStamp;
+            $('#stampSize').slider('setValue', Number(drawScale));
+            $('#stampAngle').slider('setValue', Number(drawAngle));
+
+            $('#brushSizeDiv').css('display', 'none');
+            $('#stampSizeDiv').css('display', '');
             $('#stampAngle').slider('enable');
 
             $('#vInversion').removeAttr('disabled');
@@ -711,8 +807,13 @@
             var input = window.prompt('文字を入力してください', word);
             if (input != null && input.trim()) { word = input.trim(); }
 
-            $('#brushSize').slider('disable');
-            $('#stampSize').slider('enable');
+            drawScale = drawSizeWord;
+            drawAngle = drawAngleWord;
+            $('#stampSize').slider('setValue', Number(drawScale));
+            $('#stampAngle').slider('setValue', Number(drawAngle));
+
+            $('#brushSizeDiv').css('display', 'none');
+            $('#stampSizeDiv').css('display', '');
             $('#stampAngle').slider('enable');
 
             $('#vInversion').removeAttr('disabled');
