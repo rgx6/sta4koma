@@ -16,9 +16,7 @@ app.set('port', process.env.PORT || 3002);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 // app.enable('strict routing');
-// hack : favicon
 app.use(express.favicon());
-// app.use(express.favicon(__dirname + '/public/favicon.ico', { maxAge: 2592000000 }));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(log4js.connectLogger(accessLogger, {
@@ -64,7 +62,7 @@ server.listen(app.get('port'), function () {
     appLogger.info('Express server listening on port ' + app.get('port'));
 });
 
-// log level' : 0 error  1 warn  2 info  3 debug / log: false
+// 'log level' : 0 error  1 warn  2 info  3 debug / log: false
 var io = require('socket.io').listen(server, { 'log level': 2 });
 exports.sockets = io.sockets.on('connection', staApp.onConnection);
 

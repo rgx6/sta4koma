@@ -4,6 +4,7 @@ var logger   = log4js.getLogger('appLog');
 var Promise  = require('es6-promise').Promise;
 var server   = require('../server.js');
 var db       = require('./db.js');
+var config   = require('../twitter_configuration.js');
 var tweetBot = require('./twitter_tweet_bot.js');
 
 var RESULT_OK           = 'ok';
@@ -14,7 +15,7 @@ var TYPE_UNDEFINED = 'undefined';
 
 var NAME_LENGTH_LIMIT = 30;
 
-tweetBot.start();
+if (config.sonsumer_key) tweetBot.start();
 
 exports.onConnection = function (client) {
     'use strict';
@@ -92,7 +93,7 @@ exports.onConnection = function (client) {
 
         return new Promise(function (fulfill, reject) {
             if (!png || !thumbnailPng) {
-                logger.error(err);
+                logger.warn('save image bad param');
                 reject(new Error('bad param'));
                 return;
             }

@@ -10,87 +10,89 @@ var messagebase = 'すたちゅーさんの4コマまんがが{count}本投稿�
 var comicListUrl = 'http://sta4koma.rgx6.com/list/1';
 var hashtag = '#すた4コマ';
 
-// 毎時0分0秒
-var cronTime = '0 0 * * * *';
-var job = new cron({
-    cronTime: cronTime,
-    onTick: botMainProcedure,
-});
+if (config.consumer_key) {
+    // 毎時0分0秒
+    var cronTime = '0 0 * * * *';
+    var job = new cron({
+        cronTime: cronTime,
+        onTick: botMainProcedure,
+    });
 
-// hack : botなしでも動くようにしたほうがいいか？
-var twit = new Twit(config);
+    // hack : botなしでも動くようにしたほうがいいか？
+    var twit = new Twit(config);
 
-var lastCheckedTime = new Date();
+    var lastCheckedTime = new Date();
 
-exports.start = function () {
-    'use strict';
-    logger.debug('twitter_tweet_bot start');
+    exports.start = function () {
+        'use strict';
+        logger.debug('twitter_tweet_bot start');
 
-    job.start();
-};
+        job.start();
+    };
 
-function botMainProcedure () {
-    'use strict';
-    logger.debug('botMainProcedure');
+    function botMainProcedure () {
+        'use strict';
+        logger.debug('botMainProcedure');
 
-    getNewComicCount()
-        .then(tweetNewComicCount)
-        .catch(function (err) {
-            logger.error(err);
+        getNewComicCount()
+            .then(tweetNewComicCount)
+            .catch(function (err) {
+                logger.error(err);
+            });
+    }
+
+    function getNewComicCount () {
+        'use strict';
+        logger.debug('getNewComicCount');
+
+        return new Promise(function (fulfill, reject) {
+            var now = new Date();
+            var query = db.Comic.count({
+                registeredTime: { $gte: lastCheckedTime, $lt: now },
+                isDeleted:      false,
+            });
+            query.exec(function (err, count) {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                lastCheckedTime = now;
+                fulfill(count);
+            });
         });
-}
+    }
 
-function getNewComicCount () {
-    'use strict';
-    logger.debug('getNewComicCount');
+    /**
+     * 起動あるいは前回のツイートから新しく投稿された作品数をツイートする
+     */
+    function tweetNewComicCount (count) {
+        'use strict';
+        logger.debug('tweetNewComicCount : ' + count);
 
-    return new Promise(function (fulfill, reject) {
-        var now = new Date();
-        var query = db.Comic.count({
-            registeredTime: { $gte: lastCheckedTime, $lt: now },
-            isDeleted:      false,
-        });
-        query.exec(function (err, count) {
-            if (err) {
-                reject(err);
+        return new Promise(function (fulfill, reject) {
+            if (isNaN(count)) {
+                reject(new Error('new comic count isNaN'));
                 return;
             }
-            lastCheckedTime = now;
-            fulfill(count);
-        });
-    });
-}
 
-/**
- * 起動あるいは前回のツイートから新しく投稿された作品数をツイートする
- */
-function tweetNewComicCount (count) {
-    'use strict';
-    logger.debug('tweetNewComicCount : ' + count);
-
-    return new Promise(function (fulfill, reject) {
-        if (isNaN(count)) {
-            reject(new Error('new comic count isNaN'));
-            return;
-        }
-
-        if (count === 0) {
-            fulfill();
-            return;
-        }
-        var message = messagebase.replace('{count}', count)
-                // hack : ここの処理の後にlastCheckedTimeをnowで上書きしたいが、
-                //        引数が複雑になるのでとりあえず↓で対処。
-                .replace('{hour}', (lastCheckedTime.getHours() + 23) % 24)
-                .replace('{url}', comicListUrl)
-                .replace('{hashtag}', hashtag);
-        twit.post('statuses/update', { status: message }, function (err) {
-            if (err) {
-                reject(err);
+            if (count === 0) {
+                fulfill();
                 return;
             }
-            logger.info('tweet: ' + message);
-            fulfill();
+            var message = messagebase.replace('{count}', count)
+            // hack : ここの処理の後にlastCheckedTimeをnowで上書きしたいが、
+            //        引数が複雑になるのでとりあえず↓で対処。
+                    .replace('{hour}', (lastCheckedTime.getHours() + 23) % 24)
+                    .replace('{url}', comicListUrl)
+                    .replace('{hashtag}', hashtag);
+            twit.post('statuses/update', { status: message }, function (err) {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                logger.info('tweet: ' + message);
+                fulfill();
+            });
         });
-    });
+    }
 }
