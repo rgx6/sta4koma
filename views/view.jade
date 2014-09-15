@@ -1,10 +1,13 @@
 extends layout
-block head
+block meta
     meta(name="viewport", content="width=device-width, initial-scale=1")
-    link(type="text/css", rel="stylesheet", href="/stylesheets/bootstrap.min.css")
-    link(type="text/css", rel="stylesheet", href="/stylesheets/style.css")
+    meta(name="robots", content="noindex,nofollow")
+block script
     script(type="application/javascript", src="/javascripts/bootstrap.min.js")
     script(type="application/javascript", src="/javascripts/tweetbutton.js")
+block link
+    link(type="text/css", rel="stylesheet", href="/stylesheets/bootstrap.min.css")
+    link(type="text/css", rel="stylesheet", href="/stylesheets/style.css")
 block body
     - var name = author === '名無しさん' ? '名無し' : author
     div.view.container
