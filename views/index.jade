@@ -5,25 +5,12 @@ block meta
     meta(name="robots", content="nofollow")
 block script
     script(type="application/javascript", src="/socket.io/socket.io.js")
-    script(type="application/javascript", src="/javascripts/jquery-2.1.0.min.js")
-    script(type="application/javascript", src="/javascripts/bootstrap.min.js")
     script(type="application/javascript", src="/javascripts/bootstrap-slider.js")
-    script(type="application/javascript", src="/javascripts/tweetbutton.js")
     script(type="application/javascript", src="/javascripts/index.js")
 block link
-    link(type="text/css", rel="stylesheet", href="/stylesheets/bootstrap.min.css")
     link(type="text/css", rel="stylesheet", href="/stylesheets/bootstrap-slider.css")
-    link(type="text/css", rel="stylesheet", href="/stylesheets/style.css")
 block body
     div.container(style="max-width: none; important; width: 970px;")
-        div.jumbotron
-            h1= title
-                a.twitter-follow-button(href="https://twitter.com/sta4koma"
-                    data-show-count="false" data-lang="ja") @sta4komaさんをフォロー
-            すたちゅーさんの4コマまんがを描こう！
-            br
-            みんなの作品は
-            a(href="/list/1") こちら
         div.row
             div#left.col-xs-8
                 div#canvases.frame

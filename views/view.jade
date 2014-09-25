@@ -2,12 +2,6 @@ extends layout
 block meta
     meta(name="viewport", content="width=device-width, initial-scale=1")
     meta(name="robots", content="noindex,nofollow")
-block script
-    script(type="application/javascript", src="/javascripts/bootstrap.min.js")
-    script(type="application/javascript", src="/javascripts/tweetbutton.js")
-block link
-    link(type="text/css", rel="stylesheet", href="/stylesheets/bootstrap.min.css")
-    link(type="text/css", rel="stylesheet", href="/stylesheets/style.css")
 block body
     - var name = author === '名無しさん' ? '名無し' : author
     div.view.container
@@ -22,7 +16,7 @@ block body
                 data-text="#{name}さんのすた4コマ") ツイート
         div.text-center
             h3 #{name}さんのすた4コマ
-        div.frame.container
+        div.frame
             img(src="/c/#{fileName}.png",
                 title="#{new Date(Number(fileName)).toString()}",
                 alt="ファイルがないよ(´・ω・｀)")

@@ -1,15 +1,8 @@
 extends layout
-block script
-    script(type="application/javascript", src="/javascripts/tweetbutton.js")
-block link
-    link(type="text/css", rel="stylesheet", href="/stylesheets/style.css")
 block body
     a(href="/") トップページ
     &nbsp;＞&nbsp;一覧
     div.listPage
-        div.text-align-right
-            a.twitter-follow-button(href="https://twitter.com/sta4koma"
-                data-show-count="false" data-lang="ja" data-size="large") @sta4komaさんをフォロー
         h1 作品一覧
         div
             if page != 1
