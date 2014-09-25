@@ -1,12 +1,8 @@
 extends layout
-block meta
-    meta(name="keywords", content="すたちゅー,スタチュー,すたちゅーさん,スタチューさん,4コマ,漫画,マンガ,まんが")
-    meta(name="description", content="すたちゅーさんの4コマまんがを描こう！")
-    meta(name="robots", content="nofollow")
 block script
     script(type="application/javascript", src="/socket.io/socket.io.js")
     script(type="application/javascript", src="/javascripts/bootstrap-slider.js")
-    script(type="application/javascript", src="/javascripts/index.js")
+    script(type="application/javascript", src="/javascripts/draw.js")
 block link
     link(type="text/css", rel="stylesheet", href="/stylesheets/bootstrap-slider.css")
 block body
@@ -70,11 +66,3 @@ block body
                     div#tweetButtonWrapper
                         p 投稿するとツイートボタンが出てきます
                     div#pentablet
-        div.row
-            div.col-xs-12
-                p
-                    作った人・お問い合わせ先&nbsp;
-                    a(href="https://twitter.com/rgx_6") @rgx_6
-                    &nbsp;&nbsp;&nbsp;
-                    すたちゅーさんの生みの親・素材&nbsp;
-                    a(href="https://twitter.com/dangoinette") @dangoinette
