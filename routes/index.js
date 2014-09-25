@@ -1,6 +1,6 @@
 var log4js = require('log4js');
 var logger = log4js.getLogger('appLog');
-var db = require('../sockets/db.js');
+var db     = require('../sockets/db.js');
 var staApp = require('../sockets/app.js');
 
 //------------------------------
@@ -26,6 +26,14 @@ exports.index = function (req, res) {
     'use strict';
 
     res.render('index', {
+        title: APP_TITLE
+    });
+};
+
+exports.draw = function (req, res) {
+    'use strict';
+
+    res.render('draw', {
         title: APP_TITLE
     });
 };
