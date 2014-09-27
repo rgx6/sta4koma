@@ -4,12 +4,11 @@ html
         meta(http-equiv="Content-Type", content="text/html; charset=utf-8")
         meta(http-equiv="Content-Language", content="ja")
         block meta
-            meta(name="robots", content="noindex,nofollow")
+            meta(name="robots", content="noindex, nofollow")
         title= title
         script(type="application/javascript", src="/javascripts/analytics.js")
         script(type="application/javascript", src="/javascripts/jquery-2.1.0.min.js")
         script(type="application/javascript", src="/javascripts/bootstrap.min.js")
-        script(type="application/javascript", src="/javascripts/tweetbutton.js")
         script(type="application/javascript", src="/javascripts/navbar.js")
         block script
         link(rel="icon", href="/images/favicon.png", type="image/png")
@@ -32,8 +31,8 @@ html
                             a(href="/list/1") 作品を観る
                         li#navbar-draw
                             a(href="/draw") まんがを描く
-                    ul.nav.navbar-nav.navbar-right
-                        li
-                            a.twitter-follow-button(href="https://twitter.com/sta4koma",
-                            |   data-show-count="false", data-lang="ja", data-size="large") @sta4komaさんをフォロー
         block body
+        p.text-center &copy;&nbsp;2014&nbsp;
+            a.navbar-link(href="https://twitter.com/rgx_6") @rgx_6
+            ,&nbsp;
+            a.navbar-link(href="https://twitter.com/dangoinette") @dangoinette

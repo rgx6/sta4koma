@@ -603,6 +603,8 @@
 
                 if (res.result === 'ok') {
                     alert('投稿しました\n続けて描きたい場合はページをリロードしてください');
+                    $('#post').css('display', 'none');
+                    $('#clear').css('display', 'none');
                     setTweetButton(res.fileName);
                 } else {
                     alert('エラーが発生しました');

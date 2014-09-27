@@ -25,8 +25,26 @@ var msgNotFound    = '(´・ω・｀)そんなページないよ';
 exports.index = function (req, res) {
     'use strict';
 
-    res.render('index', {
-        title: APP_TITLE
+    var query = db.Comic
+            .find({ isDeleted: false })
+            .select({ fileName: 1, _id: 0 })
+            .limit(100)
+            .sort({ fileName: 'desc' });
+    query.exec(function (err, comics) {
+        if (err) {
+            logger.error(err);
+            res.status(500).render('error', {
+                title:   APP_TITLE,
+                message: msgSystemError,
+            });
+            return;
+        }
+
+        var randomIndex = Math.floor(Math.random() * comics.length);
+        res.render('index', {
+            title: APP_TITLE,
+            fileName: comics[randomIndex].fileName,
+        });
     });
 };
 

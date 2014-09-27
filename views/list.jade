@@ -18,7 +18,7 @@ block body
             else
                 a.inactive 次のページ
                 a.inactive 最後のページ
-        div
+        div.clearfix
             ul
             each comic in comics
                 div.thumbnail
@@ -27,4 +27,3 @@ block body
                             title='#{new Date(Number(comic.fileName)).toString()}',
                             alt='ファイルがないよ(´・ω・｀)')
                     p 描いた人：&nbsp;#{comic.author}
-            div.clear

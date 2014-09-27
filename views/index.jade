@@ -3,13 +3,40 @@ block meta
     meta(name="keywords", content="すたちゅー,スタチュー,すたちゅーさん,スタチューさん,4コマ,漫画,マンガ,まんが")
     meta(name="description", content="すたちゅーさんの4コマまんがを描こう！")
     meta(name="robots", content="nofollow")
+block script
+    script(type="application/javascript", src="/javascripts/tweetbutton.js")
 block body
     div.container(style="max-width: none; important; width: 970px;")
+        div.jumbotron
+            h1= title
         div.row
-            div.col-xs-12
-                p
-                    作った人・お問い合わせ先&nbsp;
-                    a(href="https://twitter.com/rgx_6") @rgx_6
-                    &nbsp;&nbsp;&nbsp;
-                    すたちゅーさんの生みの親・素材&nbsp;
-                    a(href="https://twitter.com/dangoinette") @dangoinette
+            div.col-xs-6
+                div.clearfix
+                    h3 すたちゅーさんの 4 コマまんがを描こう
+                    hr
+                    p.pull-left
+                        | 2 足歩行の不思議な生物すたちゅー（&copy;&nbsp;
+                        a(href="https://twitter.com/dangoinette") @dangoinette
+                        | ）。
+                        br
+                        | あなたの頭の中のすたちゅーさんを 4 コマまんがにしてみましょう。
+                        br
+                        | 絵心もペンタブもいりません。
+                        br
+                        | すたんぷを押すだけの簡単なお仕事です。
+                    a.pull-right(href="/draw")
+                        button.btn.btn-lg.btn-primary 描いてみる
+                div.clearfix
+                    h3 作品例
+                    hr
+                    div.frame-half.pull-left
+                        img(src="/c/#{fileName}.png", width="100%")
+                    a.pull-right(href="/list/1")
+                        button.btn.btn-lg.btn-primary もっと観る
+            div.col-xs-6
+                h3 お知らせ&nbsp;&amp;&nbsp;新着情報
+                hr
+                a.twitter-timeline(data-dnt="true",
+                    href="https://twitter.com/sta4koma",
+                    data-widget-id="515489410226208769",
+                    lang="ja", data-chrome="nofooter") @sta4koma からのツイート
