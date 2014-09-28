@@ -977,22 +977,21 @@
 
             var mode = getDrawMode();
             if (mode === 'brush' || mode === 'eraser') {
+                cursorContext.beginPath();
+                cursorContext.arc(x, y, drawWidth / 2, 0, Math.PI * 2, false);
                 if (plugin && plugin.penAPI && plugin.penAPI.isWacom) {
                     cursorContext.lineWidth = 1;
                     cursorContext.strokeStyle = color;
                     cursorContext.fillStyle = 'rgba(0,0,0,0)';
+                    cursorContext.stroke();
                 } else if (mode === 'brush') {
-                    cursorContext.lineWidth = 0;
-                    cursorContext.strokeStyle = color;
                     cursorContext.fillStyle = color;
                 } else {
                     cursorContext.lineWidth = 1;
                     cursorContext.strokeStyle = color;
                     cursorContext.fillStyle = '#ffffff';
+                    cursorContext.stroke();
                 }
-                cursorContext.beginPath();
-                cursorContext.arc(x, y, drawWidth / 2, 0, Math.PI * 2, false);
-                cursorContext.stroke();
                 cursorContext.fill();
             } else if (mode === 'stamp') {
                 // scale()は座標指定にも影響するっぽい
@@ -1051,7 +1050,6 @@
             // console.log('drawPoint');
 
             // IEとChromeではlineToで点を描画できないようなので、多少ぼやけるがarcを使う。
-            context.strokeStyle = color;
             context.fillStyle = color;
             context.beginPath();
             context.arc(x, y, width / 2, 0, Math.PI * 2, false);
