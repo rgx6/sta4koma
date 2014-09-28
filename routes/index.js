@@ -27,7 +27,16 @@ var RESULT_SYSTEM_ERROR = 'system error';
 // routing
 //------------------------------
 
-exports.index = function (req, res) {
+exports.set = function (appRoot, app) {
+    app.get(appRoot, index);
+    app.get(appRoot + 'draw', draw);
+    app.get(appRoot + 'list', list);
+    app.get(appRoot + 'list/:page', list);
+    app.get(appRoot + 'view/:fileName', view);
+    app.get(appRoot + 'api/list/:page/:author?', apiList);
+};
+
+var index = function (req, res) {
     'use strict';
 
     var query = db.Comic.count({ isDeleted: false });
@@ -67,7 +76,7 @@ exports.index = function (req, res) {
     });
 };
 
-exports.draw = function (req, res) {
+var draw = function (req, res) {
     'use strict';
 
     res.render('draw', {
@@ -75,7 +84,7 @@ exports.draw = function (req, res) {
     });
 };
 
-exports.list = function (req, res) {
+var list = function (req, res) {
     'use strict';
 
     res.render('list', {
@@ -83,7 +92,7 @@ exports.list = function (req, res) {
     });
 };
 
-exports.view = function (req, res) {
+var view = function (req, res) {
     'use strict';
 
     var fileName = req.params.fileName;
@@ -131,7 +140,7 @@ exports.view = function (req, res) {
     });
 };
 
-exports.apiList = function (req, res) {
+var apiList = function (req, res) {
     'use strict';
 
     var page = req.params.page;
