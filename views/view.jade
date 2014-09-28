@@ -7,11 +7,6 @@ block script
 block body
     - var name = author === '名無しさん' ? '名無し' : author
     div.view.container
-        div.text-left
-            a(href="/") トップページ
-            &nbsp;＞&nbsp;
-            a(href="/list") 一覧
-            &nbsp;＞&nbsp;#{name}さんのすた4コマ
         div.text-right
             a.twitter-share-button(href="https://twitter.com/share" data-count="none"
                 data-lang="ja" data-size="large" data-hashtags="すた4コマ"
