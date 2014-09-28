@@ -7,15 +7,39 @@
         var page = getPageFromUrl();
         if (!page) location = '/list';
 
-        getList(page);
+        var author = getAuthorFromQuery();
+
+        getList(page, author);
 
         window.onpopstate = function (event) {
             'use strict';
             // console.log('onpopstate');
 
             page = getPageFromUrl();
-            getList(page);
+            author = getAuthorFromQuery();
+            getList(page, author);
         };
+
+        $('#search').on('click', function () {
+            'use strict';
+            // console.log('#search click');
+
+            var condition = $('#author').val().trim();
+            author = encodeURIComponent(condition);
+            page = 1;
+
+            getList(page, author);
+            history.pushState(null, null, '/list' + (author ? '?author=' + author : ''));
+        });
+
+        $('#author').on('keypress', function (event) {
+            'use strict';
+            // console.log('#auhtor keypress');
+
+            if (event.keyCode === 13) {
+                $('#search').trigger('click');
+            }
+        });
 
         function getPageFromUrl () {
             'use strict';
@@ -30,13 +54,24 @@
             }
         }
 
-        function getList (page) {
+        function getAuthorFromQuery () {
+            'use strict';
+            // console.log('getAuthorFromQuery');
+
+            if (location.search.match(/author=(.+)/)) {
+                return RegExp.$1;
+            } else {
+                return null;
+            }
+        }
+
+        function getList (page, author) {
             'use strict';
             // console.log('getList');
 
             $.ajax({
                 type: 'GET',
-                url: '/api/list/' + page,
+                url: '/api/list/' + page + (author ? '/' + author : ''),
                 cache: false,
                 dataType: 'json',
                 success: function (data, dataType)  {
@@ -67,6 +102,10 @@
                         + '描いた人：&nbsp;' + escapeHTML(comic.author)
                         + '</div>');
             });
+
+            var name = author ? decodeURIComponent(author) : '';
+            name = name === '名無しさん' ? name : name + 'さん';
+            $('#title').text(name ? name + 'の作品一覧' : '作品一覧');
         }
 
         function showPager (items, itemsPerPage) {
@@ -80,10 +119,12 @@
                 prevText: '前',
                 nextText: '次',
                 hrefTextPrefix: '',
+                hrefTextSuffix: author ? '?author=' + author : '',
                 onPageClick: function (pageNumber, event) {
                     page = pageNumber;
-                    getList(page);
-                    history.pushState(null, null, '/list/' + page);
+                    author = getAuthorFromQuery();
+                    getList(page, author);
+                    history.pushState(null, null, '/list/' + page + (author ? '?author=' + author : ''));
                     return false;
                 },
             });

@@ -135,6 +135,7 @@ exports.apiList = function (req, res) {
     'use strict';
 
     var page = req.params.page;
+    var author = req.params.author;
 
     if (isUndefinedOrNull(page)) {
         page = 1;
@@ -143,7 +144,12 @@ exports.apiList = function (req, res) {
         return;
     }
 
-    var query = db.Comic.count({ isDeleted: false });
+    var query;
+    if (author) {
+        query = db.Comic.count({ isDeleted: false, author: author });
+    } else {
+        query = db.Comic.count({ isDeleted: false });
+    }
     query.exec(function (err, count) {
         if (err) {
             logger.error(err);
@@ -159,12 +165,22 @@ exports.apiList = function (req, res) {
             return;
         }
 
-        var query = db.Comic
+        var query;
+        if (author) {
+            query = db.Comic
+                .find({ isDeleted: false, author: author })
+                .select({ fileName: 1, author: 1, registeredTime: 1, _id: 0 })
+                .limit(ITEMS_PER_LOG_PAGE)
+                .skip((page - 1) * ITEMS_PER_LOG_PAGE)
+                .sort({ fileName: 'desc' });
+        } else {
+            query = db.Comic
                 .find({ isDeleted: false })
                 .select({ fileName: 1, author: 1, registeredTime: 1, _id: 0 })
                 .limit(ITEMS_PER_LOG_PAGE)
                 .skip((page - 1) * ITEMS_PER_LOG_PAGE)
                 .sort({ fileName: 'desc' });
+        }
         query.exec(function (err, comics) {
             if (err) {
                 logger.error(err);

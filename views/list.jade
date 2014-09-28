@@ -5,6 +5,11 @@ block script
 block body
     div.container
         div.text-center
-            h1 作品一覧
+            h1#title 作品一覧
+            div.row.clearfix
+                div.input-group.col-xs-3.pull-right
+                    input#author.form-control(type="text", placeholder="描いた人")
+                    span.input-group-btn
+                        button#search.btn.btn-default(type="button") 検索
             ul#pagination.pagination
             div#list.clearfix
