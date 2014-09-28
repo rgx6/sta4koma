@@ -55,8 +55,10 @@ app.use(function (req, res) {
 var appRoot = '/';
 app.get(appRoot, routes.index);
 app.get(appRoot + 'draw', routes.draw);
+app.get(appRoot + 'list', routes.list);
 app.get(appRoot + 'list/:page', routes.list);
 app.get(appRoot + 'view/:fileName', routes.view);
+app.get(appRoot + 'api/list/:page', routes.apiList);
 
 var server = http.createServer(app);
 server.listen(app.get('port'), function () {

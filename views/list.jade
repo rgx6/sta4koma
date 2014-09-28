@@ -1,29 +1,12 @@
 extends layout
+block script
+    script(type="application/javascript", src="/javascripts/jquery.simplePagination.js")
+    script(type="application/javascript", src="/javascripts/list.js")
 block body
-    a(href="/") トップページ
-    &nbsp;＞&nbsp;一覧
-    div.listPage
-        h1 作品一覧
-        div
-            if page != 1
-                a(href='./1') 最初のページ
-                a(href='./#{page-1}') 前のページ
-            else
-                a.inactive 最初のページ
-                a.inactive 前のページ
-            a #{page} / #{totalPageCount}
-            if page != totalPageCount
-                a(href='./#{page-0+1}') 次のページ
-                a(href='./#{totalPageCount}') 最後のページ
-            else
-                a.inactive 次のページ
-                a.inactive 最後のページ
-        div.clearfix
-            ul
-            each comic in comics
-                div.thumbnail
-                    a(href='/view/#{comic.fileName}')
-                        img(src='/c/thumb/#{comic.fileName}.thumb.png',
-                            title='#{new Date(Number(comic.fileName)).toString()}',
-                            alt='ファイルがないよ(´・ω・｀)')
-                    p 描いた人：&nbsp;#{comic.author}
+    div.container
+        a(href="/") トップページ
+        &nbsp;＞&nbsp;一覧
+        div.text-center
+            h1 作品一覧
+            ul#pagination.pagination
+            div#list.clearfix

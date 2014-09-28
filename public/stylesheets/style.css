@@ -108,28 +108,8 @@ img.radio-group {
  * 一覧ページ
 */
 
-.listPage {
-  margin: 20px;
-  text-align: center;
-}
-
-.listPage a {
-  margin-right: 30px;
-}
-
-.inactive {
-  color: #999999;
-}
-
 .thumbnail {
-  float: left;
   margin: 10px;
-}
-
-.thumbnail img {
-  border: solid;
-  border-width: 1px;
-  border-color: #999999;
 }
 
 /**
