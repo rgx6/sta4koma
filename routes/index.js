@@ -30,12 +30,8 @@ var RESULT_SYSTEM_ERROR = 'system error';
 exports.index = function (req, res) {
     'use strict';
 
-    var query = db.Comic
-            .find({ isDeleted: false })
-            .select({ fileName: 1, _id: 0 })
-            .limit(100)
-            .sort({ fileName: 'desc' });
-    query.exec(function (err, comics) {
+    var query = db.Comic.count({ isDeleted: false });
+    query.exec(function (err, count) {
         if (err) {
             logger.error(err);
             res.status(500).render('error', {
@@ -45,10 +41,28 @@ exports.index = function (req, res) {
             return;
         }
 
-        var randomIndex = Math.floor(Math.random() * comics.length);
-        res.render('index', {
-            title: APP_TITLE,
-            fileName: comics[randomIndex].fileName,
+        var randomIndex = Math.floor(Math.random() * count);
+
+        var query = db.Comic
+                .findOne({ isDeleted: false })
+                .select({ fileName: 1, _id: 0 })
+                .skip(randomIndex)
+                .sort({ fileName: 'desc' });
+        query.exec(function (err, comic) {
+            if (err) {
+                logger.error(err);
+                res.status(500).render('error', {
+                    title:   APP_TITLE,
+                    message: msgSystemError,
+                });
+                return;
+            }
+
+            var fileName = comic ? comic.fileName : '';
+            res.render('index', {
+                title:    APP_TITLE,
+                fileName: fileName,
+            });
         });
     });
 };
