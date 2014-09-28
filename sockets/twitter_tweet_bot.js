@@ -7,7 +7,7 @@ var config  = require('../twitter_configuration.js');
 
 var messagebase = 'すたちゅーさんの4コマまんがが{count}本投稿されたよ！({hour}時台)\n{url}\n{hashtag}';
 // hack : domainを設定ファイルに
-var comicListUrl = 'http://sta4koma.rgx6.com/list/1';
+var comicListUrl = 'http://sta4koma.rgx6.com/list';
 var hashtag = '#すた4コマ';
 
 if (config.consumer_key) {
