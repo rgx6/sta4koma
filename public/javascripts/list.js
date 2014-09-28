@@ -25,11 +25,13 @@
             // console.log('#search click');
 
             var condition = $('#author').val().trim();
+            if (!condition) return;
             author = encodeURIComponent(condition);
             page = 1;
 
             getList(page, author);
             history.pushState(null, null, '/list' + (author ? '?author=' + author : ''));
+            $('#author').val('');
         });
 
         $('#author').on('keypress', function (event) {
@@ -104,7 +106,7 @@
             });
 
             var name = author ? decodeURIComponent(author) : '';
-            name = name === '名無しさん' ? name : name + 'さん';
+            if (name && name !== '名無しさん') name = name + 'さん';
             $('#title').text(name ? name + 'の作品一覧' : '作品一覧');
         }
 
