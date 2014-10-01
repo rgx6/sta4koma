@@ -54,13 +54,8 @@
  * ツールメニュー
 */
 
-.tool-area > div {
+#tool-area > div {
   margin-top: 10px;
-}
-
-#fixMenu {
-  vertical-align: top;
-  margin-left: 10px;
 }
 
 /**

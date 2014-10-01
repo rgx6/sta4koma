@@ -2,6 +2,7 @@ extends layout
 block script
     script(type="application/javascript", src="/socket.io/socket.io.js")
     script(type="application/javascript", src="/javascripts/bootstrap-slider.js")
+    script(type="application/javascript", src="/javascripts/followscrolling.js")
     script(type="application/javascript", src="/javascripts/draw.js")
     script(type="application/javascript", src="/javascripts/tweetbutton.js")
 block link
@@ -16,10 +17,9 @@ block body
                     canvas#mainCanvas(width="500px", height="1100px")
                     canvas#cursorCanvas(width="500px", height="1100px")
             div#right.col-xs-4
-                div.tool-area
+                div#tool-area
                     div
                         canvas#previewCanvas(width="200px", height="200px")
-                        button#fixMenu.btn.btn-default.active(type="button" data-toggle="button") 固定
                     div
                         div.btn-group(data-toggle="buttons")
                             label#stamp.btn.btn-default.active
