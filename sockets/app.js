@@ -4,8 +4,6 @@ var logger   = log4js.getLogger('appLog');
 var Promise  = require('es6-promise').Promise;
 var server   = require('../server.js');
 var db       = require('./db.js');
-var config   = require('../twitter_configuration.js');
-var tweetBot = require('./twitter_tweet_bot.js');
 
 var RESULT_OK           = 'ok';
 var RESULT_BAD_PARAM    = 'bad param';
@@ -14,8 +12,6 @@ var RESULT_SYSTEM_ERROR = 'system error';
 var TYPE_UNDEFINED = 'undefined';
 
 var NAME_LENGTH_LIMIT = 30;
-
-if (config.consumer_key) tweetBot.start();
 
 exports.onConnection = function (client) {
     'use strict';
