@@ -104,7 +104,14 @@ img.radio-group {
 */
 
 .thumbnail {
+  position: relative;
   margin: 10px;
+}
+
+.thumbnail .label {
+  position: absolute;
+  top: 0px;
+  left: 0px;
 }
 
 /**

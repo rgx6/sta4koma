@@ -4,6 +4,10 @@
     $(document).ready(function () {
         'use strict';
 
+        var now;
+        var newComicLimitDay = 7;
+        var readLog = new ReadLog();
+
         var page = getPageFromUrl();
         if (!page) location = '/list';
 
@@ -41,6 +45,13 @@
             if (event.keyCode === 13) {
                 $('#search').trigger('click');
             }
+        });
+
+        $('#list').on('click', 'a', function (e) {
+            'use strict';
+            // console.log('#list a click');
+
+            $(this).find('span').remove();
         });
 
         function getPageFromUrl () {
@@ -94,9 +105,12 @@
 
             $('#list').empty();
 
+            now = new Date();
+
             comics.forEach(function (comic) {
                 $('#list').append(
                     '<a class="thumbnail pull-left" href="/view/' + comic.fileName + '" target="_blank">'
+                        + (isNewComic(comic.fileName) ? '<span class="label label-primary">New</span>' : '')
                         + '<img src="/c/thumb/' + comic.fileName + '.thumb.png"'
                         + 'title="' + new Date(Number(comic.fileName)).toString() + '"'
                         + 'alt="ファイルがないよ(´・ω・｀)" />'
@@ -108,6 +122,18 @@
             var name = author ? decodeURIComponent(author) : '';
             if (name && name !== '名無しさん') name = name + 'さん';
             $('#title').text(name ? name + 'の作品一覧' : '作品一覧');
+        }
+
+        function isNewComic (time) {
+            'use strict';
+            // console.log('isNewComic');
+
+            var days = (now - time) / (24 * 60 * 60 * 1000);
+            if (days < newComicLimitDay) {
+                return !readLog.isRead(time);
+            } else {
+                return false;
+            }
         }
 
         function showPager (items, itemsPerPage) {
