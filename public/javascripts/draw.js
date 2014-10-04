@@ -610,11 +610,29 @@
                     alert('投稿しました\n続けて描きたい場合はページをリロードしてください');
                     $('#post').css('display', 'none');
                     $('#clear').css('display', 'none');
+                    $('#help').css('display', 'none');
                     setTweetButton(res.fileName);
                 } else {
                     alert('エラーが発生しました');
                     isDisabled = false;
                 }
+            });
+        });
+
+        /**
+         * 操作説明ボタンをクリック
+         */
+        $('#help').on('click', function () {
+            'use strict';
+            // console.log('#help click');
+
+            $.colorbox({
+                href: '/help',
+                transition: 'none',
+                closeButton: false,
+                open: true,
+                innerWidth: 300,
+                innerHeight: 450,
             });
         });
 

@@ -2,11 +2,13 @@ extends layout
 block script
     script(type="application/javascript", src="/socket.io/socket.io.js")
     script(type="application/javascript", src="/javascripts/bootstrap-slider.js")
+    script(type="application/javascript", src="/javascripts/jquery.colorbox-min.js")
     script(type="application/javascript", src="/javascripts/followscrolling.js")
     script(type="application/javascript", src="/javascripts/draw.js")
     script(type="application/javascript", src="/javascripts/tweetbutton.js")
 block link
     link(type="text/css", rel="stylesheet", href="/stylesheets/bootstrap-slider.css")
+    link(type="text/css", rel="stylesheet", href="/stylesheets/colorbox.css")
 block body
     div.container(style="max-width: none; important; width: 970px;")
         div.row
@@ -64,5 +66,6 @@ block body
                     div
                         button#post.btn.btn-info(type="button") 投稿する
                         button#clear.btn.btn-default(type="button") クリア
+                        button#help.btn.btn-default(type="button") 操作説明
                     div#tweetButtonWrapper
                     div#pentablet

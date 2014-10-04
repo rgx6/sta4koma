@@ -33,6 +33,7 @@ exports.set = function (appRoot, app) {
     app.get(appRoot + 'list', list);
     app.get(appRoot + 'list/:page', list);
     app.get(appRoot + 'view/:fileName', view);
+    app.get(appRoot + 'help', help);
     app.get(appRoot + 'api/list/:page/:author?', apiList);
 };
 
@@ -137,6 +138,14 @@ var view = function (req, res) {
             fileName: fileName,
             author:   comic.author,
         });
+    });
+};
+
+var help = function (req, res) {
+    'use strict';
+
+    res.render('help', {
+        title: APP_TITLE
     });
 };
 
