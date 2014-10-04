@@ -106,7 +106,6 @@
         var word = 'うどん';
 
         // ホイール操作用ショートカットキー
-        var key_width_pressed    = false;
         var key_size_pressed     = false;
         var key_rotation_pressed = false;
 
@@ -643,9 +642,6 @@
                 case 83: // S
                     key_size_pressed = e.type === 'keydown';
                     break;
-                case 87: // W
-                    key_width_pressed = e.type === 'keydown';
-                    break;
             }
         });
         $(window).keyup(function (e) {
@@ -706,43 +702,35 @@
             var delta = e.originalEvent.deltaY < 0 ? 1 : -1;
             var mode = getDrawMode();
 
-            // todo : 整理したい
-            // todo : キーボードショートカットをbrush/eraserとstamp/wordで共通化したい
-
-            if (key_width_pressed) {
+            if (key_size_pressed) {
                 e.preventDefault();
-                if (mode !== 'brush' && mode !== 'eraser') return;
-
-                var newWidth = Number(drawWidth) + delta * BRUSH_SIZE_STEP;
-                newWidth = Math.max(newWidth, BRUSH_SIZE_MIN);
-                newWidth = Math.min(newWidth, BRUSH_SIZE_MAX);
-                drawWidth = newWidth;
-                if (mode === 'brush') {
-                    drawSizeBrush = drawWidth;
-                } else if (mode === 'eraser') {
-                    drawSizeEraser = drawWidth;
+                if (mode === 'brush' || mode === 'eraser') {
+                    var newWidth = Number(drawWidth) + delta * BRUSH_SIZE_STEP;
+                    newWidth = Math.max(newWidth, BRUSH_SIZE_MIN);
+                    newWidth = Math.min(newWidth, BRUSH_SIZE_MAX);
+                    drawWidth = newWidth;
+                    if (mode === 'brush') {
+                        drawSizeBrush = drawWidth;
+                    } else {
+                        drawSizeEraser = drawWidth;
+                    }
+                    $('#brushSize').slider('setValue', drawWidth);
+                    drawPreview();
+                } else if (mode === 'stamp' || mode === 'word'){
+                    var newScale = Number(drawScale) + delta * STAMP_SIZE_STEP * WHEEL_SCALE;
+                    newScale = Math.max(newScale, STAMP_SIZE_MIN);
+                    newScale = Math.min(newScale, STAMP_SIZE_MAX);
+                    drawScale = newScale;
+                    if (mode === 'stamp') {
+                        drawSizeStamp = drawScale;
+                    } else {
+                        drawSizeWord = drawScale;
+                    }
+                    $('#stampSize').slider('setValue', drawScale);
+                    drawPreview();
                 } else {
                     alert('予期しないエラー');
                 }
-                $('#brushSize').slider('setValue', drawWidth);
-                drawPreview();
-            } else if (key_size_pressed) {
-                e.preventDefault();
-                if (mode !== 'stamp' && mode !== 'word') return;
-
-                var newScale = Number(drawScale) + delta * STAMP_SIZE_STEP * WHEEL_SCALE;
-                newScale = Math.max(newScale, STAMP_SIZE_MIN);
-                newScale = Math.min(newScale, STAMP_SIZE_MAX);
-                drawScale = newScale;
-                if (mode === 'stamp') {
-                    drawSizeStamp = drawScale;
-                } else if (mode === 'word') {
-                    drawSizeWord = drawScale;
-                } else {
-                    alert('予期しないエラー');
-                }
-                $('#stampSize').slider('setValue', drawScale);
-                drawPreview();
             } else if (key_rotation_pressed) {
                 e.preventDefault();
                 if (mode !== 'stamp' && mode !== 'word') return;
