@@ -253,7 +253,7 @@ var apiPostGood = function (req, res) {
 
     var userId = req.body['userId'];
     if (isUndefinedOrNull(userId)) {
-        res.status(40).json({ result: RESULT_BAD_PARAM });
+        res.status(400).json({ result: RESULT_BAD_PARAM });
         return;
     }
 
