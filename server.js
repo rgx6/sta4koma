@@ -24,7 +24,7 @@ app.use(log4js.connectLogger(accessLogger, {
     'level': log4js.levels.INFO,
     // アクセスログを出力する際に無視する拡張子
     // hack : 作品閲覧ページを作ったら.pngを追加
-    'nolog': [ '\\.css', '\\.js' ],
+    'nolog': [ '\\.css', '\\.js', '\\.png' ],
     // アクセスログのフォーマット
     'format': JSON.stringify({
         'remote-addr':    ':remote-addr',
