@@ -35,6 +35,8 @@ exports.set = function (appRoot, app) {
     app.get(appRoot + 'view/:fileName', view);
     app.get(appRoot + 'help', help);
     app.get(appRoot + 'api/list/:page/:author?', apiList);
+    app.get(appRoot + 'api/good/:fileName', apiGetGood);
+    app.post(appRoot + 'api/good', apiPostGood);
 };
 
 var index = function (req, res) {
@@ -211,6 +213,80 @@ var apiList = function (req, res) {
                 comics:       comics,
                 items:        count,
                 itemsPerPage: ITEMS_PER_LOG_PAGE,
+            });
+        });
+    });
+};
+
+var apiGetGood = function (req, res) {
+    'use strict';
+
+    var fileName = req.params.fileName;
+    if (isUndefinedOrNull(fileName) || !fileName.match(/^[1-9][0-9]*$/)) {
+        res.status(400).json({ result: RESULT_BAD_PARAM });
+        return;
+    }
+
+    var query = db.Good.count({ fileName: fileName });
+    query.exec(function (err, count) {
+        if (err) {
+            logger.error(err);
+            res.status(500).json({ result: RESULT_SYSTEM_ERROR });
+            return;
+        }
+
+        res.status(200).json({
+            result: RESULT_OK,
+            count:  count,
+        });
+    });
+};
+
+var apiPostGood = function (req, res) {
+    'use strict';
+
+    var fileName = req.body['fileName'];
+    if (isUndefinedOrNull(fileName) || !fileName.match(/^[1-9][0-9]*$/)) {
+        res.status(400).json({ result: RESULT_BAD_PARAM });
+        return;
+    }
+
+    var userId = req.body['userId'];
+    if (isUndefinedOrNull(userId)) {
+        res.status(40).json({ result: RESULT_BAD_PARAM });
+        return;
+    }
+
+    var query = db.Good.count({ fileName: fileName, userId: userId });
+    query.exec(function (err, count) {
+        if (err) {
+            logger.error(err);
+            res.status(500).json({ result: RESULT_SYSTEM_ERROR });
+            return;
+        }
+
+        if (count > 0) {
+            res.status(200).json({
+                result:  RESULT_OK,
+                updated: false,
+            });
+            return;
+        }
+
+        var good = new db.Good();
+        good.fileName       = fileName;
+        good.userId         = userId;
+        good.registeredTime = new Date();
+        good.save(function (err, doc) {
+            if (err) {
+                logger.error(err);
+                res.status(500).json({ result: RESULT_SYSTEM_ERROR });
+                return;
+            }
+
+            res.status(200).json({
+                result:  RESULT_OK,
+                updated: true,
             });
         });
     });

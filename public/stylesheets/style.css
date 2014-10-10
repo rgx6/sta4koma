@@ -122,3 +122,7 @@ img.radio-group {
   width: 600px;
   padding: 0;
 }
+
+.badge {
+  margin-left: 5px;
+}

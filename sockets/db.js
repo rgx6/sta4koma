@@ -13,7 +13,15 @@
     });
     mongoose.model('Comic', ComicSchema);
 
+    var GoodSchema = new Schema({
+        fileName:       { type: String,  require: true, index: true },
+        userId:         { type: String,  require: true },
+        registeredTime: { type: Date,    require: true },
+    });
+    mongoose.model('Good', GoodSchema);
+
     mongoose.connect('mongodb://localhost/sta4koma');
 
     exports.Comic = mongoose.model('Comic');
+    exports.Good = mongoose.model('Good');
 })();
