@@ -126,3 +126,7 @@ img.radio-group {
 .badge {
   margin-left: 5px;
 }
+
+.frame img {
+  cursor: pointer;
+}

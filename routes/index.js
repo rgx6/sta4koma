@@ -35,6 +35,8 @@ exports.set = function (appRoot, app) {
     app.get(appRoot + 'view/:fileName', view);
     app.get(appRoot + 'help', help);
     app.get(appRoot + 'api/list/:page/:author?', apiList);
+    app.get(appRoot + 'api/view/next/:fileName/:author?', apiViewGetNext);
+    app.get(appRoot + 'api/view/prev/:fileName/:author?', apiViewGetPrev);
     app.get(appRoot + 'api/good/:fileName', apiGetGood);
     app.post(appRoot + 'api/good', apiPostGood);
 };
@@ -214,6 +216,80 @@ var apiList = function (req, res) {
                 items:        count,
                 itemsPerPage: ITEMS_PER_LOG_PAGE,
             });
+        });
+    });
+};
+
+var apiViewGetNext = function (req, res) {
+    'use strict';
+
+    var fileName = req.params.fileName;
+    var author = req.params.author;
+
+    if (isUndefinedOrNull(fileName) || !fileName.match(/^[1-9][0-9]*$/)) {
+        res.status(400).json({ result: RESULT_BAD_PARAM });
+        return;
+    }
+
+    var query;
+    if (author) {
+        query = db.Comic
+            .findOne({ isDeleted: false, fileName: { $lt: fileName }, author: author })
+            .select({ fileName: 1, _id: 0 })
+            .sort({ fileName: 'desc' });
+    } else {
+        query = db.Comic
+            .findOne({ isDeleted: false, fileName: { $lt: fileName } })
+            .select({ fileName: 1, _id: 0 })
+            .sort({ fileName: 'desc' });
+    }
+    query.exec(function (err, comic) {
+        if (err) {
+            logger.error(err);
+            res.status(500).json({ result: RESULT_SYSTEM_ERROR });
+            return;
+        }
+
+        res.status(200).json({
+            result:   RESULT_OK,
+            fileName: comic ? comic.fileName : null,
+        });
+    });
+};
+
+var apiViewGetPrev = function (req, res) {
+    'use strict';
+
+    var fileName = req.params.fileName;
+    var author = req.params.author;
+
+    if (isUndefinedOrNull(fileName) || !fileName.match(/^[1-9][0-9]*$/)) {
+        res.status(400).json({ result: RESULT_BAD_PARAM });
+        return;
+    }
+
+    var query;
+    if (author) {
+        query = db.Comic
+            .findOne({ isDeleted: false, fileName: { $gt: fileName }, author: author })
+            .select({ fileName: 1, _id: 0 })
+            .sort({ fileName: 'asc' });
+    } else {
+        query = db.Comic
+            .findOne({ isDeleted: false, fileName: { $gt: fileName } })
+            .select({ fileName: 1, _id: 0 })
+            .sort({ fileName: 'asc' });
+    }
+    query.exec(function (err, comic) {
+        if (err) {
+            logger.error(err);
+            res.status(500).json({ result: RESULT_SYSTEM_ERROR });
+            return;
+        }
+
+        res.status(200).json({
+            result:   RESULT_OK,
+            fileName: comic ? comic.fileName : null,
         });
     });
 };

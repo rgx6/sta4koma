@@ -4,10 +4,10 @@
     $(document).ready(function () {
         'use strict';
 
-        var readLog = new ReadLog();
-
         location.href.match(/view\/(\d+)/);
         var fileName = RegExp.$1;
+
+        var author = getAuthorFromQuery();
 
         var userId = localStorage.UserID;
         if (!userId) {
@@ -16,9 +16,25 @@
         }
 
         var goodCount = 0;
-
-        readLog.read(fileName);
         getGoodCount();
+
+        var readLog = new ReadLog();
+        readLog.read(fileName);
+
+        var noNext = false;
+        var noPrev = false;
+
+        $('#img').on('click', function (e) {
+            'use strict';
+            // console.log('#img click');
+
+            var x = e.pageX - $('#img').offset().left;
+            if (x < this.width / 2) {
+                if (!noPrev) moveTo('prev');
+            } else {
+                if (!noNext) moveTo('next');
+            }
+        });
 
         $('#good').on('click', function () {
             'use strict';
@@ -44,6 +60,17 @@
 
         });
 
+        function getAuthorFromQuery () {
+            'use strict';
+            // console.log('getAuthorFromQuery');
+
+            if (location.search.match(/author=(.+)/)) {
+                return RegExp.$1;
+            } else {
+                return null;
+            }
+        }
+
         function getGoodCount () {
             'use strict';
             // console.log('getGoodCount');
@@ -62,5 +89,28 @@
                 }
             });
         }
+
+        function moveTo (direction) {
+            'use strict';
+            // console.log('moveTo ' + direction);
+
+            $.ajax({
+                type: 'GET',
+                url: '/api/view/' + direction + '/' + fileName + '/' + (author ? author : ''),
+                cache: false,
+                dataType: 'json',
+                success: function (data, dataType)  {
+                    if (data.fileName) {
+                        location = '/view/' + data.fileName + (author ? '?author=' + author : '');
+                    } else {
+                        if (direction === 'next') noNext = true;
+                        else if (direction === 'prev') noPrev = true;
+                    }
+                },
+                error: function (req, status, error) {
+                    console.error(req.responseJSON);
+                }
+            });
+        };
     });
 })();
