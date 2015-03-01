@@ -141,7 +141,7 @@
             'use strict';
             // console.log('showPager');
 
-            $('#pagination').pagination({
+            $('#paginationTop, #paginationBottom').pagination({
                 items: items,
                 itemsOnPage: itemsPerPage,
                 currentPage: page,
@@ -154,6 +154,7 @@
                     author = getAuthorFromQuery();
                     getList(page, author);
                     history.pushState(null, null, '/list/' + page + (author ? '?author=' + author : ''));
+                    $(document).scrollTop(0);
                     return false;
                 },
             });
