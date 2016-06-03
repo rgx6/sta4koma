@@ -9,17 +9,19 @@ block script
 block body
     - var name = author === '名無しさん' ? '名無し' : author
     - var url = "http://sta4koma.rgx6.com/view/" + fileName;
+    - var imgSrc = '/c/' + fileName + '.png';
+    - var imgTitle = new Date(Number(fileName)).toString();
     div.view.container
         div.text-right
             a.twitter-share-button(href="https://twitter.com/share" data-count="none"
                 data-lang="ja" data-size="large" data-hashtags="すた4コマ"
-                data-text="#{name}さんのすた4コマ" data-url="#{url}") ツイート
+                data-text= name + "さんのすた4コマ" data-url= url) ツイート
         div.text-right
             button#good.btn.btn-xs.btn-default ちゅー
             span#goodCount.badge 0
         div.text-center
             h3 #{name}さんのすた4コマ
         div.frame
-            img#img(src="/c/#{fileName}.png",
-                title="#{new Date(Number(fileName)).toString()}",
+            img#img(src= imgSrc,
+                title= imgTitle,
                 alt="ファイルがないよ(´・ω・｀)")

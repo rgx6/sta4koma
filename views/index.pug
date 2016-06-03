@@ -6,6 +6,8 @@ block meta
 block script
     script(type="application/javascript", src="/javascripts/tweetbutton.js")
 block body
+    - var viewUrl = '/view/' + fileName;
+    - var imgSrc = '/c/' + fileName + '.png';
     div.container(style="max-width: none; important; width: 970px;")
         div.jumbotron
             h1= title
@@ -30,7 +32,8 @@ block body
                     h3 作品例
                     hr
                     div.frame-half.pull-left
-                        img(src="/c/#{fileName}.png", width="100%", alt="")
+                        a(href= viewUrl)
+                            img(src= imgSrc, width="100%", alt="")
                     a.pull-right(href="/list")
                         button.btn.btn-lg.btn-primary もっと観る
             div.col-xs-6
