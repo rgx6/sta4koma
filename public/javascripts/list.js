@@ -110,7 +110,7 @@
             comics.forEach(function (comic) {
                 var url = '/view/' + comic.fileName + (author ? '?author=' + author : '');
                 $('#list').append(
-                    '<a class="thumbnail pull-left" href="' + url + '" target="_blank">'
+                    '<a class="thumbnail pull-left" href="' + url + '">'
                         + (isNewComic(comic.fileName) ? '<span class="label label-primary">New</span>' : '')
                         + '<img src="/c/thumb/' + comic.fileName + '.thumb.png"'
                         + 'title="' + new Date(Number(comic.fileName)).toString() + '"'
