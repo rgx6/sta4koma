@@ -123,10 +123,56 @@ img.radio-group {
   padding: 0;
 }
 
+.good {
+  margin-top: 15px;
+}
+
 .badge {
   margin-left: 5px;
 }
 
-.frame img {
-  cursor: pointer;
+.frame-previous-link {
+    cursor: url("/images/left-arrow.png"), pointer;
+    height: 1200px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 250px;
+}
+
+.frame-next-link {
+    cursor: url("/images/right-arrow.png"), pointer;
+    height: 1200px;
+    left: 350px;
+    position: absolute;
+    top: 0;
+    width: 250px;
+}
+
+.previous-text {
+    bottom: 0;
+    cursor: pointer;
+    font-size: 1.2em;
+    left: 0;
+    margin: 0;
+    padding: 10px;
+    position: absolute;
+}
+
+.next-text {
+    bottom: 0;
+    cursor: pointer;
+    font-size: 1.2em;
+    margin: 0;
+    padding: 10px;
+    position: absolute;
+    right: 0;
+}
+
+/**
+ *
+*/
+
+.relative {
+    position: relative;
 }

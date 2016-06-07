@@ -16,12 +16,16 @@ block body
             a.twitter-share-button(href="https://twitter.com/share" data-count="none"
                 data-lang="ja" data-size="large" data-hashtags="すた4コマ"
                 data-text= name + "さんのすた4コマ" data-url= url) ツイート
-        div.text-right
+        div.text-right.good
             button#good.btn.btn-xs.btn-default ちゅー
             span#goodCount.badge 0
         div.text-center
             h3 #{name}さんのすた4コマ
-        div.frame
-            img#img(src= imgSrc,
+        div.frame.relative
+            div#previous.frame-previous-link
+                a.previous-text ＜ 前の作品
+            div#next.frame-next-link
+                a.next-text 次の作品 ＞
+            img(src= imgSrc,
                 title= imgTitle,
                 alt="ファイルがないよ(´・ω・｀)")

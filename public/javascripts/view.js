@@ -24,16 +24,18 @@
         var noNext = false;
         var noPrev = false;
 
-        $('#img').on('click', function (e) {
+        $('#previous').on('click', function (e) {
             'use strict';
-            // console.log('#img click');
+            // console.log('#previous click');
 
-            var x = e.pageX - $('#img').offset().left;
-            if (x < this.width / 2) {
-                if (!noPrev) moveTo('prev');
-            } else {
-                if (!noNext) moveTo('next');
-            }
+            if (!noPrev) moveTo('prev');
+        });
+
+        $('#next').on('click', function (e) {
+            'use strict';
+            // console.log('#next click');
+
+            if (!noNext) moveTo('next');
         });
 
         $('#good').on('click', function () {
@@ -103,8 +105,13 @@
                     if (data.fileName) {
                         location = '/view/' + data.fileName + (author ? '?author=' + author : '');
                     } else {
-                        if (direction === 'next') noNext = true;
-                        else if (direction === 'prev') noPrev = true;
+                        if (direction === 'next') {
+                            noNext = true;
+                            $('#next').hide();
+                        } else if (direction === 'prev') {
+                            noPrev = true;
+                            $('#previous').hide();
+                        }
                     }
                 },
                 error: function (req, status, error) {
