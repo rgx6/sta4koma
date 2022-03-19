@@ -9,7 +9,7 @@ log4js.configure('log4js_configuration.json', { reloadSecs: 60 });
 
 var logger = log4js.getLogger('twitterlog');
 
-var comicListUrl = 'http://sta4koma.rgx6.com/list';
+var comicListUrl = 'https://sta4koma.rgx6.com/list';
 var messagePrefix = [
     'ちゅー',
     'ちゅー？',
