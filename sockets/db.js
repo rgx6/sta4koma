@@ -20,7 +20,11 @@
     });
     mongoose.model('Good', GoodSchema);
 
-    mongoose.connect('mongodb://localhost/sta4koma');
+    mongoose.connect('mongodb://localhost/sta4koma', {
+        useCreateIndex: true,
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
 
     exports.Comic = mongoose.model('Comic');
     exports.Good = mongoose.model('Good');

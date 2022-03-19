@@ -7,8 +7,7 @@ var config  = require('./twitter_configuration.js');
 
 log4js.configure('log4js_configuration.json', { reloadSecs: 60 });
 
-var logger = log4js.getLogger('twitterLog');
-logger.setLevel(log4js.levels.INFO);
+var logger = log4js.getLogger('twitterlog');
 
 var comicListUrl = 'http://sta4koma.rgx6.com/list';
 var messagePrefix = [

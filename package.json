@@ -6,13 +6,17 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "compression": "^1.7.4",
     "cron": "~1.0.4",
-    "es6-promise": "~1.0.0",
-    "express": "~3.4.7",
-    "log4js": "~0.6.9",
-    "mongoose": "~3.8.4",
-    "pug": "^2.0.0-beta2",
-    "socket.io": "^1.4.6",
+    "errorhandler": "^1.5.1",
+    "es6-promise": "^3.0.2",
+    "express": "~4.17.1",
+    "log4js": "~6.4.3",
+    "method-override": "^3.0.0",
+    "mongoose": "^5.13.9",
+    "pug": "^3.0.2",
+    "serve-favicon": "^2.5.0",
+    "socket.io": "^4.2.0",
     "twit": "~1.1.15"
   }
 }
