@@ -21,6 +21,7 @@ app.set('view engine', 'pug');
 app.use(favicon(path.join(__dirname, 'public/images/favicon.png')));
 app.use(compression());
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride());
 app.use(log4js.connectLogger(accessLogger, {
     // express 閾値ではなく指定したログレベルで記録される
