@@ -28,18 +28,11 @@ block body
                         | すたんぷを押すだけの簡単なお仕事です。
                     a.pull-right(href="/draw")
                         button.btn.btn-lg.btn-primary 描いてみる
-                div.clearfix
-                    h3 作品例
-                    hr
-                    div.frame-half.pull-left
-                        a(href= viewUrl)
-                            img(src= imgSrc, width="100%", alt="")
-                    a.pull-right(href="/list")
-                        button.btn.btn-lg.btn-primary もっと観る
             div.col-xs-6
-                h3 お知らせ&nbsp;&amp;&nbsp;新着情報
+                h3 作品例
                 hr
-                a.twitter-timeline(data-dnt="true",
-                    href="https://twitter.com/sta4koma",
-                    data-widget-id="515489410226208769",
-                    lang="ja", data-chrome="nofooter") @sta4koma からのツイート
+                div.frame-half.pull-left
+                    a(href= viewUrl)
+                        img(src= imgSrc, width="100%", alt="")
+                a.pull-right(href="/list")
+                    button.btn.btn-lg.btn-primary もっと観る
