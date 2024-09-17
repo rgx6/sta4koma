@@ -49,16 +49,15 @@ exports.onConnection = function (client) {
             comic.updatedTime = comic.registeredTime;
             comic.isDeleted = false;
 
-            comic.save(function (err, doc) {
-                if (err) {
-                    logger.error(err);
-                    callback({ result: RESULT_SYSTEM_ERROR });
-                    return;
-                }
+            comic.save().then((doc) => {
                 callback({
                     result:   RESULT_OK,
                     fileName: doc.fileName,
                 });
+                return;
+            }).catch((err) => {
+                logger.error(err);
+                callback({ result: RESULT_SYSTEM_ERROR });
                 return;
             });
         }).catch(function (err) {

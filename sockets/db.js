@@ -2,6 +2,8 @@
     'use strict';
 
     var mongoose = require('mongoose');
+    var config = require('../db_configuration.js');
+
     var Schema = mongoose.Schema;
 
     var ComicSchema = new Schema({
@@ -20,11 +22,7 @@
     });
     mongoose.model('Good', GoodSchema);
 
-    mongoose.connect('mongodb://localhost/sta4koma', {
-        useCreateIndex: true,
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    });
+    mongoose.connect(config.connectionString);
 
     exports.Comic = mongoose.model('Comic');
     exports.Good = mongoose.model('Good');

@@ -44,17 +44,8 @@ exports.set = function (appRoot, app) {
 var index = function (req, res) {
     'use strict';
 
-    var query = db.Comic.count({ isDeleted: false });
-    query.exec(function (err, count) {
-        if (err) {
-            logger.error(err);
-            res.status(500).render('error', {
-                title:   APP_TITLE,
-                message: msgSystemError,
-            });
-            return;
-        }
-
+    var query = db.Comic.countDocuments({ isDeleted: false });
+    query.exec().then((count) => {
         var randomIndex = Math.floor(Math.random() * count);
 
         var query = db.Comic
@@ -62,22 +53,27 @@ var index = function (req, res) {
                 .select({ fileName: 1, _id: 0 })
                 .skip(randomIndex)
                 .sort({ fileName: 'desc' });
-        query.exec(function (err, comic) {
-            if (err) {
-                logger.error(err);
-                res.status(500).render('error', {
-                    title:   APP_TITLE,
-                    message: msgSystemError,
-                });
-                return;
-            }
-
+        query.exec().then((comic) => {
             var fileName = comic ? comic.fileName : '';
             res.render('index', {
                 title:    APP_TITLE,
                 fileName: fileName,
             });
+        }).catch((err) => {
+            logger.error(err);
+            res.status(500).render('error', {
+                title:   APP_TITLE,
+                message: msgSystemError,
+            });
+            return;
         });
+    }).catch((err) => {
+        logger.error(err);
+        res.status(500).render('error', {
+            title:   APP_TITLE,
+            message: msgSystemError,
+        });
+        return;
     });
 };
 
@@ -111,15 +107,7 @@ var view = function (req, res) {
     }
 
     var query = db.Comic.findOne({ fileName: fileName }).select({ author: 1, isDeleted: 1, _id: 0 });
-    query.exec(function (err, comic) {
-        if (err) {
-            logger.error(err);
-            res.status(500).render('error', {
-                title:   APP_TITLE,
-                message: msgSystemError,
-            });
-            return;
-        }
+    query.exec().then((comic) => {
         if (comic === null) {
             logger.warn('file not found : ' + fileName);
             res.status(404).render('error', {
@@ -142,6 +130,13 @@ var view = function (req, res) {
             fileName: fileName,
             author:   comic.author,
         });
+    }).catch((err) => {
+        logger.error(err);
+        res.status(500).render('error', {
+            title:   APP_TITLE,
+            message: msgSystemError,
+        });
+        return;
     });
 };
 
@@ -168,17 +163,11 @@ var apiList = function (req, res) {
 
     var query;
     if (author) {
-        query = db.Comic.count({ isDeleted: false, author: author });
+        query = db.Comic.countDocuments({ isDeleted: false, author: author });
     } else {
-        query = db.Comic.count({ isDeleted: false });
+        query = db.Comic.countDocuments({ isDeleted: false });
     }
-    query.exec(function (err, count) {
-        if (err) {
-            logger.error(err);
-            res.status(500).json({ result: RESULT_SYSTEM_ERROR });
-            return;
-        }
-
+    query.exec().then((count) => {
         if (count === 0) {
             res.status(200).json({
                 result: RESULT_OK,
@@ -203,20 +192,22 @@ var apiList = function (req, res) {
                 .skip((page - 1) * ITEMS_PER_LOG_PAGE)
                 .sort({ fileName: 'desc' });
         }
-        query.exec(function (err, comics) {
-            if (err) {
-                logger.error(err);
-                res.status(500).json({ result: RESULT_SYSTEM_ERROR });
-                return;
-            }
-
+        query.exec().then((comics) => {
             res.status(200).json({
                 result:       RESULT_OK,
                 comics:       comics,
                 items:        count,
                 itemsPerPage: ITEMS_PER_LOG_PAGE,
             });
+        }).catch((err) => {
+            logger.error(err);
+            res.status(500).json({ result: RESULT_SYSTEM_ERROR });
+            return;
         });
+    }).catch((err) => {
+        logger.error(err);
+        res.status(500).json({ result: RESULT_SYSTEM_ERROR });
+        return;
     });
 };
 
@@ -243,17 +234,15 @@ var apiViewGetNext = function (req, res) {
             .select({ fileName: 1, _id: 0 })
             .sort({ fileName: 'desc' });
     }
-    query.exec(function (err, comic) {
-        if (err) {
-            logger.error(err);
-            res.status(500).json({ result: RESULT_SYSTEM_ERROR });
-            return;
-        }
-
+    query.exec().then((comic) => {
         res.status(200).json({
             result:   RESULT_OK,
             fileName: comic ? comic.fileName : null,
         });
+    }).catch((err) => {
+        logger.error(err);
+        res.status(500).json({ result: RESULT_SYSTEM_ERROR });
+        return;
     });
 };
 
@@ -280,17 +269,15 @@ var apiViewGetPrev = function (req, res) {
             .select({ fileName: 1, _id: 0 })
             .sort({ fileName: 'asc' });
     }
-    query.exec(function (err, comic) {
-        if (err) {
-            logger.error(err);
-            res.status(500).json({ result: RESULT_SYSTEM_ERROR });
-            return;
-        }
-
+    query.exec().then((comic) => {
         res.status(200).json({
             result:   RESULT_OK,
             fileName: comic ? comic.fileName : null,
         });
+    }).catch((err) => {
+        logger.error(err);
+        res.status(500).json({ result: RESULT_SYSTEM_ERROR });
+        return;
     });
 };
 
@@ -303,18 +290,16 @@ var apiGetGood = function (req, res) {
         return;
     }
 
-    var query = db.Good.count({ fileName: fileName });
-    query.exec(function (err, count) {
-        if (err) {
-            logger.error(err);
-            res.status(500).json({ result: RESULT_SYSTEM_ERROR });
-            return;
-        }
-
+    var query = db.Good.countDocuments({ fileName: fileName });
+    query.exec().then((count) => {
         res.status(200).json({
             result: RESULT_OK,
             count:  count,
         });
+    }).catch((err) => {
+        logger.error(err);
+        res.status(500).json({ result: RESULT_SYSTEM_ERROR });
+        return;
     });
 };
 
@@ -333,14 +318,8 @@ var apiPostGood = function (req, res) {
         return;
     }
 
-    var query = db.Good.count({ fileName: fileName, userId: userId });
-    query.exec(function (err, count) {
-        if (err) {
-            logger.error(err);
-            res.status(500).json({ result: RESULT_SYSTEM_ERROR });
-            return;
-        }
-
+    var query = db.Good.countDocuments({ fileName: fileName, userId: userId });
+    query.exec().then((count) => {
         if (count > 0) {
             res.status(200).json({
                 result:  RESULT_OK,
@@ -353,18 +332,20 @@ var apiPostGood = function (req, res) {
         good.fileName       = fileName;
         good.userId         = userId;
         good.registeredTime = new Date();
-        good.save(function (err, doc) {
-            if (err) {
-                logger.error(err);
-                res.status(500).json({ result: RESULT_SYSTEM_ERROR });
-                return;
-            }
-
+        good.save().then((doc) => {
             res.status(200).json({
                 result:  RESULT_OK,
                 updated: true,
             });
+        }).catch((err) => {
+            logger.error(err);
+            res.status(500).json({ result: RESULT_SYSTEM_ERROR });
+            return;
         });
+    }).catch((err) => {
+        logger.error(err);
+        res.status(500).json({ result: RESULT_SYSTEM_ERROR });
+        return;
     });
 };
 

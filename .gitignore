@@ -1,5 +1,5 @@
 node_modules
-twitter_configuration.js
+/db_configuration.js
 /log/*
 /public/c/*.png
 /public/c/thumb/*.png
